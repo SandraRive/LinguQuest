@@ -1,4 +1,4 @@
-# ENGLISH QUEST
+# LinguQuest
 
 Academia de inglés de cero absoluto a B2, ambientada en un apocalipsis zombie en tonos pastel.
 Funciona entera en el navegador: sin servidor, sin base de datos y sin internet una vez cargada.

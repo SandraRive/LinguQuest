@@ -2,39 +2,39 @@
 
 /*
   Layout: barra lateral suave + panel central estrecho (poca información a la vez).
-  Estilo "apocalipsis pastel": niebla menta, melocotón, mantequilla y un toque lavanda solo para las infecciones.
+  Estilo "apocalipsis pastel" en gris perla: melocotón apagado, azul niebla y mantequilla; lavanda solo para infecciones.
   Cada color tiene dos versiones: el tono legible (texto) y el relleno pastel (-fill).
 */
 :root {
-  --bg: #edf4ef;            /* niebla menta */
+  --bg: #f1efec;            /* gris perla */
   --surface: #ffffff;
-  --surface-2: #e9f1eb;
-  --line: #d4e2d8;
-  --ink: #24322b;           /* texto sobre rellenos pastel */
-  --text: #24322b;
-  --muted: #5a6a61;
-  --primary: #b9584a;       /* melocotón tostado (texto) */
-  --primary-fill: #f8bfb1;  /* melocotón pastel */
-  --secondary: #2d7f6b;     /* menta oscura (texto) */
-  --secondary-fill: #b6e6d6;/* menta zombie */
-  --accent: #8c6a10;        /* mantequilla oscura (texto) */
-  --accent-fill: #f7dd94;   /* mantequilla */
-  --success: #2f8460;
-  --success-fill: #bfe7cf;
-  --danger: #b4505c;
-  --danger-fill: #f6c3c8;
-  --infection: #7a55b8;
-  --infection-fill: #dccbf5;
-  --primary-tint: #fde4dc;
-  --secondary-tint: #ddf3eb;
-  --accent-tint: #fcf1cf;
-  --success-tint: #dcf2e4;
-  --danger-tint: #fbe1e4;
-  --infection-tint: #eee5fb;
-  --shadow: 0 1px 2px rgb(30 60 45 / 0.05), 0 8px 24px -12px rgb(30 60 45 / 0.18);
-  --glow-a: #fde2d6;
-  --glow-b: #cdeedf;
-  --glow-c: #fbf0c9;
+  --surface-2: #f5f3f0;
+  --line: #e2ded8;
+  --ink: #2b2a28;           /* texto sobre rellenos pastel */
+  --text: #2b2a28;
+  --muted: #66625c;
+  --primary: #a85a44;       /* melocotón tostado (texto) */
+  --primary-fill: #e9b8a6;  /* melocotón apagado */
+  --secondary: #3f6f80;     /* azul niebla oscuro (texto) */
+  --secondary-fill: #a9c7d3;/* azul niebla */
+  --accent: #86661a;        /* mantequilla oscura (texto) */
+  --accent-fill: #ebd39a;   /* mantequilla */
+  --success: #3d7a59;
+  --success-fill: #bcdcc8;
+  --danger: #a94b52;
+  --danger-fill: #eec0c2;
+  --infection: #6e5a9a;
+  --infection-fill: #d9d0ec;
+  --primary-tint: #f8e9e2;
+  --secondary-tint: #e6eff3;
+  --accent-tint: #f8f1de;
+  --success-tint: #e4f0e8;
+  --danger-tint: #f8e5e6;
+  --infection-tint: #eeeaf6;
+  --shadow: 0 1px 2px rgb(40 35 30 / 0.05), 0 8px 24px -12px rgb(40 35 30 / 0.16);
+  --glow-a: #f5ebe5;
+  --glow-b: #e9eef0;
+  --glow-c: #f3eee2;
   --font-display: "Fredoka", "Trebuchet MS", "Verdana", sans-serif;
   --font-body: "Atkinson Hyperlegible", "Verdana", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", monospace;
@@ -42,32 +42,32 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #17201c; --surface: #202b26; --surface-2: #29362f; --line: #37473f;
-    --ink: #1f2a24; --text: #eef4f0; --muted: #a8b9af;
-    --primary: #f7b9aa; --primary-fill: #f4ae9d;
-    --secondary: #9fe0cb; --secondary-fill: #9fdcc8;
-    --accent: #f5d98a; --accent-fill: #f3d58a;
-    --success: #94d9b3; --success-fill: #8fd1ad;
-    --danger: #f3a5ad; --danger-fill: #f0a0a8;
-    --infection: #cdb5f3; --infection-fill: #c4a9ef;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.6);
-    --glow-a: #382b27; --glow-b: #1d3a2f; --glow-c: #363223;
-    --primary-tint: #43322c; --secondary-tint: #253d3a; --accent-tint: #423b29; --success-tint: #253d33; --danger-tint: #45302f; --infection-tint: #362c4f;
+    --bg: #1e2023; --surface: #272a2e; --surface-2: #2f3337; --line: #3b4045;
+    --ink: #26231f; --text: #eceae6; --muted: #aeaaa3;
+    --primary: #edbba9; --primary-fill: #e5ae9b;
+    --secondary: #a9cddb; --secondary-fill: #9cc3d2;
+    --accent: #ecd391; --accent-fill: #e6cc89;
+    --success: #9fd3b4; --success-fill: #93c9a9;
+    --danger: #eeaaae; --danger-fill: #e8a0a5;
+    --infection: #c9b8ec; --infection-fill: #bba8e6;
+    --primary-tint: #3d302b; --secondary-tint: #26343a; --accent-tint: #3a3427; --success-tint: #25392e; --danger-tint: #3d2b2e; --infection-tint: #322c42;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.55);
+    --glow-a: #29241f; --glow-b: #21282c; --glow-c: #2a2820;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #17201c; --surface: #202b26; --surface-2: #29362f; --line: #37473f;
-  --ink: #1f2a24; --text: #eef4f0; --muted: #a8b9af;
-  --primary: #f7b9aa; --primary-fill: #f4ae9d;
-  --secondary: #9fe0cb; --secondary-fill: #9fdcc8;
-  --accent: #f5d98a; --accent-fill: #f3d58a;
-  --success: #94d9b3; --success-fill: #8fd1ad;
-  --danger: #f3a5ad; --danger-fill: #f0a0a8;
-  --infection: #cdb5f3; --infection-fill: #c4a9ef;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.6);
-  --glow-a: #382b27; --glow-b: #1d3a2f; --glow-c: #363223;
-  --primary-tint: #43322c; --secondary-tint: #253d3a; --accent-tint: #423b29; --success-tint: #253d33; --danger-tint: #45302f; --infection-tint: #362c4f;
+  --bg: #1e2023; --surface: #272a2e; --surface-2: #2f3337; --line: #3b4045;
+  --ink: #26231f; --text: #eceae6; --muted: #aeaaa3;
+  --primary: #edbba9; --primary-fill: #e5ae9b;
+  --secondary: #a9cddb; --secondary-fill: #9cc3d2;
+  --accent: #ecd391; --accent-fill: #e6cc89;
+  --success: #9fd3b4; --success-fill: #93c9a9;
+  --danger: #eeaaae; --danger-fill: #e8a0a5;
+  --infection: #c9b8ec; --infection-fill: #bba8e6;
+  --primary-tint: #3d302b; --secondary-tint: #26343a; --accent-tint: #3a3427; --success-tint: #25392e; --danger-tint: #3d2b2e; --infection-tint: #322c42;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.55);
+  --glow-a: #29241f; --glow-b: #21282c; --glow-c: #2a2820;
   color-scheme: dark;
 }
 

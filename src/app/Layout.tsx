@@ -83,7 +83,7 @@ export function Layout({ route, children }: { route: string; children: ReactNode
       {/* Barra superior (móvil) */}
       <header className="sticky z-20 flex items-center justify-between gap-3 border-b border-line bg-surface py-3 lg:hidden"
         style={{ top: 'env(safe-area-inset-top, 0px)', paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))', paddingRight: 'max(16px, env(safe-area-inset-right, 0px))' }}>
-        <a href="#refugio" className="font-display text-xl text-text no-underline">English <span className="text-primary">Quest</span></a>
+        <a href="#refugio" className="font-display text-xl text-text no-underline">Lingu<span className="text-primary">Quest</span></a>
         <div className="flex items-center gap-3">
           <span className="num text-sm text-accent">Nv {lvl.level}</span>
           <button onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-nav" className="rounded-xl border border-line px-3 py-2 font-bold">{open ? 'Cerrar' : 'Menú'}</button>
@@ -94,7 +94,7 @@ export function Layout({ route, children }: { route: string; children: ReactNode
       {/* Barra lateral (escritorio) */}
       <aside className="hidden lg:flex flex-col gap-6 border-r border-line bg-surface/80 backdrop-blur p-5 sticky top-0 h-screen overflow-y-auto">
         <a href="#refugio" className="no-underline">
-          <p className="font-display text-2xl leading-none text-text">English <span className="text-primary">Quest</span></p>
+          <p className="font-display text-2xl leading-none text-text">Lingu<span className="text-primary">Quest</span></p>
           <p className="text-xs text-muted mt-1">Frecuencia de supervivientes · 0 → B2</p>
         </a>
         <div className="rounded-2xl bg-surface-2 p-3">

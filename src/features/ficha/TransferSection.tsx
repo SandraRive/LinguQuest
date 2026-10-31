@@ -112,7 +112,7 @@ function Sender({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="self-stretch text-muted">En el otro dispositivo, abre English Quest → Ficha → «Recibir aquí» y apunta la cámara a la pantalla. {codes.length > 1 ? 'Los códigos van cambiando solos: deja la cámara quieta hasta que se lean todos.' : ''}</p>
+      <p className="self-stretch text-muted">En el otro dispositivo, abre LinguQuest → Ficha → «Recibir aquí» y apunta la cámara a la pantalla. {codes.length > 1 ? 'Los códigos van cambiando solos: deja la cámara quieta hasta que se lean todos.' : ''}</p>
       {err && <p className="text-danger">{err}</p>}
       {!codes.length && !err && <p className="text-muted">Preparando códigos…</p>}
       {codes[i] && (
@@ -166,7 +166,7 @@ function Receiver({ onBack, onDone, onUseText }: { onBack: () => void; onDone: (
       const code = jsQR(ctx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' });
       if (!code) return;
       const chunk = parseChunk(code.data);
-      if (!chunk) { setStatus('Ese código no es de English Quest.'); return; }
+      if (!chunk) { setStatus('Ese código no es de LinguQuest.'); return; }
       const first = got.current.values().next().value as Chunk | undefined;
       if (first && first.id !== chunk.id) { got.current.clear(); setStatus('Códigos nuevos detectados: empezando de nuevo.'); }
       got.current.set(chunk.index, chunk);
@@ -246,7 +246,7 @@ function TextReceiver({ onBack, onDone }: { onBack: () => void; onDone: (d: Game
   const [err, setErr] = useState('');
   const go = async () => {
     const chunk = parseChunk(text.replace(/\s+/g, ''));
-    if (!chunk) { setErr('Ese texto no es un progreso de English Quest. Cópialo entero, empieza por «EQ1:».'); return; }
+    if (!chunk) { setErr('Ese texto no es un progreso de LinguQuest. Cópialo entero, empieza por «EQ1:».'); return; }
     try { onDone(await decodeChunks([chunk])); } catch (e) { setErr((e as Error).message); }
   };
   return (

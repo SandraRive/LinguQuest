@@ -90,7 +90,7 @@ export async function decodeChunks(chunks: Chunk[]): Promise<GameState> {
     parsed = JSON.parse(new TextDecoder().decode(bytes));
   } catch { throw new Error('No se ha podido leer el progreso. Vuelve a escanear los códigos.'); }
   const p = parsed as { v?: number; d?: Partial<GameState> };
-  if (p.v !== 1 || !p.d || typeof p.d.lessons !== 'object' || typeof p.d.cards !== 'object' || !Array.isArray(p.d.xp)) throw new Error('Estos códigos no son de English Quest o son de otra versión.');
+  if (p.v !== 1 || !p.d || typeof p.d.lessons !== 'object' || typeof p.d.cards !== 'object' || !Array.isArray(p.d.xp)) throw new Error('Estos códigos no son de LinguQuest o son de otra versión.');
   return p.d as GameState;
 }
 
