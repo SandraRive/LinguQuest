@@ -1,0 +1,185 @@
+import type { Exercise } from './schema';
+import { ch } from './helpers';
+import type { LevelCode } from './curriculum';
+
+/* ───────── Listening: transmisiones de radio ───────── */
+export interface Transmission {
+  id: string; level: LevelCode; title: string; caller: string; accent: 'en-GB' | 'en-US';
+  requires: string; // id de la sala necesaria (nunca se usa lo no aprendido)
+  lines: { en: string; es: string }[];
+  questions: Exercise[];
+}
+
+export const TRANSMISSIONS: Transmission[] = [
+  {
+    id: 't1', level: 'PRE_A1', title: 'Primer contacto', caller: 'Tom · Radio Base', accent: 'en-GB', requires: 'pre-a1-u1-l3',
+    lines: [
+      { en: 'Hello. This is Radio Base.', es: 'Hola. Aquí Radio Base.' },
+      { en: "I'm Tom. I'm a survivor.", es: 'Soy Tom. Soy superviviente.' },
+      { en: "We're in the shelter.", es: 'Estamos en el refugio.' },
+      { en: "We're safe, but we're hungry.", es: 'Estamos a salvo, pero tenemos hambre.' },
+      { en: 'Are you safe?', es: '¿Estás a salvo?' },
+    ],
+    questions: [
+      ch('t1-q1', '¿Cómo se llama?', '¿Nombre?', ['Tim', 'Tom', 'Tony'], 1, 'I\'m Tom.'),
+      ch('t1-q2', '¿Dónde están?', '¿Dónde?', ['En el refugio', 'En casa', 'En la radio'], 0, 'We\'re in the shelter.'),
+      ch('t1-q3', '¿Cómo están?', '¿Cómo?', ['Cansados y con frío', 'A salvo pero con hambre', 'Contentos'], 1, 'We\'re safe, but we\'re hungry.'),
+    ],
+  },
+  {
+    id: 't2', level: 'PRE_A1', title: 'Deletreo urgente', caller: 'Kate · Estación norte', accent: 'en-GB', requires: 'pre-a1-u2-l7',
+    lines: [
+      { en: 'Hello, Radio Base. My name is Kate.', es: 'Hola, Radio Base. Me llamo Kate.' },
+      { en: 'K, A, T, E. Kate.', es: 'K, A, T, E. Kate.' },
+      { en: "I'm thirty-four.", es: 'Tengo treinta y cuatro años.' },
+      { en: 'We are fifteen people here.', es: 'Aquí somos quince personas.' },
+      { en: 'Fifteen. One, five.', es: 'Quince. Uno, cinco.' },
+    ],
+    questions: [
+      ch('t2-q1', '¿Cómo se deletrea su nombre?', 'Nombre', ['C-A-T-E', 'K-A-T-E', 'K-E-T-I'], 1, 'K, A, T, E.'),
+      ch('t2-q2', '¿Cuántos años tiene?', 'Edad', ['24', '34', '43'], 1, "I'm thirty-four."),
+      ch('t2-q3', '¿Cuántas personas son?', 'Personas', ['15', '50', '5'], 0, 'Fifteen. One, five.'),
+    ],
+  },
+  {
+    id: 't3', level: 'PRE_A1', title: 'Inventario del almacén', caller: 'Luis · Almacén sur', accent: 'en-US', requires: 'pre-a1-u3-l12',
+    lines: [
+      { en: 'Hi, this is Luis.', es: 'Hola, aquí Luis.' },
+      { en: 'The food is in the green boxes.', es: 'La comida está en las cajas verdes.' },
+      { en: 'The water is in the blue bottles.', es: 'El agua está en las botellas azules.' },
+      { en: "The flashlight isn't here.", es: 'La linterna no está aquí.' },
+      { en: 'The keys are in a red bag.', es: 'Las llaves están en una bolsa roja.' },
+    ],
+    questions: [
+      ch('t3-q1', '¿Dónde está la comida?', 'Comida', ['En las cajas verdes', 'En las botellas azules', 'En la bolsa roja'], 0, 'The food is in the green boxes.'),
+      ch('t3-q2', '¿Qué objeto NO está?', 'Falta', ['Las llaves', 'La linterna', 'El agua'], 1, "The flashlight isn't here."),
+      ch('t3-q3', '¿De qué color es la bolsa de las llaves?', 'Color', ['Azul', 'Verde', 'Roja'], 2, 'a red bag.'),
+    ],
+  },
+  {
+    id: 't4', level: 'PRE_A1', title: 'Buscando a la familia', caller: 'Ana · Campamento', accent: 'en-US', requires: 'pre-a1-u4-l16',
+    lines: [
+      { en: "Good evening. I'm Ana. I'm from Chicago.", es: 'Buenas noches. Soy Ana. Soy de Chicago.' },
+      { en: 'My brother is in Madrid. His name is Dani.', es: 'Mi hermano está en Madrid. Se llama Dani.' },
+      { en: "He's twenty-two.", es: 'Tiene veintidós años.' },
+      { en: 'Is he with you?', es: '¿Está con vosotros?' },
+      { en: 'Please answer on Monday or Tuesday.', es: 'Por favor, responded el lunes o el martes.' },
+    ],
+    questions: [
+      ch('t4-q1', '¿De dónde es Ana?', 'Origen', ['Madrid', 'Chicago', 'Londres'], 1, "I'm from Chicago."),
+      ch('t4-q2', '¿A quién busca?', 'Busca a…', ['A su hermana', 'A su hermano', 'A su padre'], 1, 'My brother… His name is Dani.'),
+      ch('t4-q3', '¿Cuándo hay que responder?', 'Cuándo', ['Lunes o martes', 'Jueves o viernes', 'El fin de semana'], 0, 'on Monday or Tuesday.'),
+    ],
+  },
+];
+
+/* ───────── Reading: diarios encontrados ───────── */
+export interface ReadingText {
+  id: string; level: LevelCode; title: string; kind: string; requires: string;
+  sentences: { en: string; es: string; structure?: string }[];
+  questions: Exercise[];
+}
+
+export const READINGS: ReadingText[] = [
+  {
+    id: 'r1', level: 'PRE_A1', title: 'Diario de Sandra, día 1', kind: 'Diario', requires: 'pre-a1-u2-l7',
+    sentences: [
+      { en: 'My name is Sandra.', es: 'Me llamo Sandra.', structure: 'TO BE' },
+      { en: "I'm twenty-five.", es: 'Tengo veinticinco años.', structure: 'Edad con be' },
+      { en: "I'm Spanish.", es: 'Soy española.', structure: 'TO BE' },
+      { en: "I'm in a shelter.", es: 'Estoy en un refugio.', structure: 'TO BE' },
+      { en: "It's cold and I'm tired.", es: 'Hace frío y estoy cansada.', structure: 'It para el tiempo' },
+      { en: "But I'm safe.", es: 'Pero estoy a salvo.' },
+    ],
+    questions: [
+      ch('r1-q1', '¿Cuántos años tiene Sandra?', 'Edad', ['15', '25', '35'], 1, "I'm twenty-five."),
+      ch('r1-q2', '¿Dónde está?', 'Lugar', ['En casa', 'En un refugio', 'En la radio'], 1, "I'm in a shelter."),
+      ch('r1-q3', '¿Qué frase usa "it" para hablar del tiempo?', 'it', ["It's cold.", "I'm tired.", "I'm safe."], 0, "It's cold."),
+    ],
+  },
+  {
+    id: 'r2', level: 'PRE_A1', title: 'Nota en la puerta del almacén', kind: 'Nota', requires: 'pre-a1-u3-l12',
+    sentences: [
+      { en: 'Hello!', es: '¡Hola!' },
+      { en: 'We are three survivors: Ana, Tom and Luis.', es: 'Somos tres supervivientes: Ana, Tom y Luis.', structure: 'Plural' },
+      { en: 'The food is in the green boxes.', es: 'La comida está en las cajas verdes.', structure: 'Color + sustantivo' },
+      { en: 'The water is in the yellow bottles.', es: 'El agua está en las botellas amarillas.', structure: 'Color + sustantivo' },
+      { en: 'The torch is on the table.', es: 'La linterna está en la mesa.' },
+      { en: 'Are you a survivor? You are safe here.', es: '¿Eres superviviente? Aquí estás a salvo.', structure: 'Pregunta con be' },
+    ],
+    questions: [
+      ch('r2-q1', '¿Cuántos supervivientes hay?', 'Número', ['2', '3', '4'], 1, 'We are three survivors.'),
+      ch('r2-q2', '¿De qué color son las botellas de agua?', 'Color', ['Verdes', 'Amarillas', 'Azules'], 1, 'yellow bottles.'),
+      ch('r2-q3', 'En "the green boxes", ¿qué palabra está en plural?', 'Plural', ['the', 'green', 'boxes'], 2, 'Solo el sustantivo lleva plural.'),
+    ],
+  },
+  {
+    id: 'r3', level: 'PRE_A1', title: 'Ficha de superviviente', kind: 'Formulario', requires: 'pre-a1-u4-l16',
+    sentences: [
+      { en: 'Name: Kate Wilson.', es: 'Nombre: Kate Wilson.' },
+      { en: "I'm from London. I'm English.", es: 'Soy de Londres. Soy inglesa.', structure: 'País / nacionalidad' },
+      { en: 'My family: my mother and my two brothers.', es: 'Mi familia: mi madre y mis dos hermanos.', structure: 'Posesivos' },
+      { en: 'Their names are Jack and Harry.', es: 'Se llaman Jack y Harry.', structure: 'Posesivos' },
+      { en: 'My birthday is in March.', es: 'Mi cumpleaños es en marzo.', structure: 'in + mes' },
+      { en: "Today is Friday and we're happy.", es: 'Hoy es viernes y estamos contentos.' },
+    ],
+    questions: [
+      ch('r3-q1', '¿De dónde es Kate?', 'Origen', ['Madrid', 'Londres', 'Chicago'], 1, "I'm from London."),
+      ch('r3-q2', '¿Cuántos hermanos tiene?', 'Hermanos', ['1', '2', '3'], 1, 'my two brothers.'),
+      ch('r3-q3', '"Their names" se refiere a los nombres de…', 'their', ['su madre', 'sus hermanos', 'Kate'], 1, 'their = de ellos (los hermanos).'),
+    ],
+  },
+];
+
+/* ───────── Writing guiado ───────── */
+export interface WritingTask {
+  id: string; level: LevelCode; title: string; requires: string;
+  prompt: string; example: string;
+  /** Regex (en texto) que debe cumplir una respuesta correcta. */
+  accept: string;
+  acceptFlags?: string;
+  help: string;
+}
+
+export const WRITING_TASKS: WritingTask[] = [
+  { id: 'w1', level: 'PRE_A1', title: 'Tu nombre', requires: 'pre-a1-u1-l2', prompt: 'Escribe tu nombre en una frase completa.', example: 'My name is Sandra.', accept: "^(my name is|my name's|i'm|i am) [\\p{L}' -]+$", acceptFlags: 'iu', help: 'Empieza con My name is… o I\'m…' },
+  { id: 'w2', level: 'PRE_A1', title: 'Tu edad', requires: 'pre-a1-u2-l7', prompt: 'Escribe cuántos años tienes. Usa letras o cifras.', example: "I'm twenty-five.", accept: "^(i'm|i am) ([0-9]{1,3}|[a-z]+(-[a-z]+)?)( years old)?$", acceptFlags: 'i', help: 'Recuerda: la edad va con be, no con have.' },
+  { id: 'w3', level: 'PRE_A1', title: 'De dónde eres', requires: 'pre-a1-u4-l15', prompt: 'Escribe de qué país eres.', example: "I'm from Spain.", accept: "^(I'm|I am) from [A-Z][\\p{L} ]+$", acceptFlags: 'u', help: 'I\'m from + país, con mayúscula.' },
+  { id: 'w4', level: 'PRE_A1', title: 'Un objeto de tu mochila', requires: 'pre-a1-u3-l12', prompt: 'Describe un objeto de tu mochila con su color.', example: "It's a red bottle.", accept: "^(it's|it is) (a|an) [a-z]+ [a-z]+$", acceptFlags: 'i', help: 'It\'s a/an + color + objeto.' },
+  { id: 'w5', level: 'PRE_A1', title: 'Presenta a un familiar', requires: 'pre-a1-u4-l13', prompt: 'Presenta a un familiar: "This is my…".', example: 'This is my brother.', accept: "^this is my (mother|father|brother|sister|son|daughter|family|friend)$", acceptFlags: 'i', help: 'This is my + familiar.' },
+  { id: 'w6', level: 'PRE_A1', title: 'Qué día es hoy', requires: 'pre-a1-u4-l14', prompt: 'Escribe qué día de la semana es hoy.', example: "It's Monday today.", accept: "^((it's|it is) (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)( today)?|today is (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday))$", acceptFlags: '', help: 'It\'s + día (con mayúscula).' },
+];
+
+/* ───────── Speaking ───────── */
+export interface SpeakingSituation {
+  id: string; level: LevelCode; title: string; requires: string;
+  turns: { say: string; es: string; expect: string; model: string; tip: string }[];
+}
+
+export const SPEAKING: SpeakingSituation[] = [
+  {
+    id: 's1', level: 'PRE_A1', title: 'Presentarte por radio', requires: 'pre-a1-u4-l15',
+    turns: [
+      { say: "Hello! What's your name?", es: '¡Hola! ¿Cómo te llamas?', expect: "\\b(my name is|my name's|i'm|i am)\\b", model: 'My name is Sandra.', tip: 'Empieza con "My name is…".' },
+      { say: 'Nice to meet you. Where are you from?', es: 'Encantado. ¿De dónde eres?', expect: "\\b(i'm|i am) from\\b", model: "I'm from Spain.", tip: 'I\'m from + país.' },
+      { say: 'How old are you?', es: '¿Cuántos años tienes?', expect: "\\b(i'm|i am)\\b", model: "I'm twenty-five.", tip: 'I\'m + número. Sin "have".' },
+      { say: 'Are you safe?', es: '¿Estás a salvo?', expect: '\\b(yes|no)\\b', model: 'Yes, I am.', tip: 'Yes, I am. / No, I\'m not.' },
+    ],
+  },
+  {
+    id: 's2', level: 'PRE_A1', title: 'Pedir un objeto', requires: 'pre-a1-u4-l16',
+    turns: [
+      { say: 'Hi! What colour is your bag?', es: '¡Hola! ¿De qué color es tu mochila?', expect: "\\b(it's|it is)\\b", model: "It's blue.", tip: 'It\'s + color.' },
+      { say: 'Where is the torch?', es: '¿Dónde está la linterna?', expect: "\\b(it's|it is|in the|here)\\b", model: "It's in the bag.", tip: 'It\'s here / It\'s in the bag.' },
+      { say: 'Are the keys in the box?', es: '¿Están las llaves en la caja?', expect: '\\b(yes|no)\\b', model: "No, they aren't.", tip: 'Yes, they are. / No, they aren\'t.' },
+    ],
+  },
+];
+
+export const REPEAT_PHRASES = [
+  { en: "Hello. I'm a survivor.", es: 'Hola. Soy superviviente.', requires: 'pre-a1-u3-l9' },
+  { en: 'Thank you. Nice to meet you.', es: 'Gracias. Encantada de conocerte.', requires: 'pre-a1-u4-l15' },
+  { en: 'They are three survivors.', es: 'Son tres supervivientes.', requires: 'pre-a1-u2-l6' },
+  { en: "She's Spanish. She's from Spain.", es: 'Es española. Es de España.', requires: 'pre-a1-u4-l15' },
+  { en: 'Where is the red bag?', es: '¿Dónde está la mochila roja?', requires: 'pre-a1-u4-l16' },
+];

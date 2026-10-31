@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/*
+  Layout: barra lateral suave + panel central estrecho (poca información a la vez).
+  Estilo "apocalipsis pastel": niebla menta, melocotón, mantequilla y un toque lavanda solo para las infecciones.
+  Cada color tiene dos versiones: el tono legible (texto) y el relleno pastel (-fill).
+*/
+:root {
+  --bg: #edf4ef;            /* niebla menta */
+  --surface: #ffffff;
+  --surface-2: #e9f1eb;
+  --line: #d4e2d8;
+  --ink: #24322b;           /* texto sobre rellenos pastel */
+  --text: #24322b;
+  --muted: #5a6a61;
+  --primary: #b9584a;       /* melocotón tostado (texto) */
+  --primary-fill: #f8bfb1;  /* melocotón pastel */
+  --secondary: #2d7f6b;     /* menta oscura (texto) */
+  --secondary-fill: #b6e6d6;/* menta zombie */
+  --accent: #8c6a10;        /* mantequilla oscura (texto) */
+  --accent-fill: #f7dd94;   /* mantequilla */
+  --success: #2f8460;
+  --success-fill: #bfe7cf;
+  --danger: #b4505c;
+  --danger-fill: #f6c3c8;
+  --infection: #7a55b8;
+  --infection-fill: #dccbf5;
+  --primary-tint: #fde4dc;
+  --secondary-tint: #ddf3eb;
+  --accent-tint: #fcf1cf;
+  --success-tint: #dcf2e4;
+  --danger-tint: #fbe1e4;
+  --infection-tint: #eee5fb;
+  --shadow: 0 1px 2px rgb(30 60 45 / 0.05), 0 8px 24px -12px rgb(30 60 45 / 0.18);
+  --glow-a: #fde2d6;
+  --glow-b: #cdeedf;
+  --glow-c: #fbf0c9;
+  --font-display: "Fredoka", "Trebuchet MS", "Verdana", sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Verdana", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", monospace;
+  --text-scale: 1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17201c; --surface: #202b26; --surface-2: #29362f; --line: #37473f;
+    --ink: #1f2a24; --text: #eef4f0; --muted: #a8b9af;
+    --primary: #f7b9aa; --primary-fill: #f4ae9d;
+    --secondary: #9fe0cb; --secondary-fill: #9fdcc8;
+    --accent: #f5d98a; --accent-fill: #f3d58a;
+    --success: #94d9b3; --success-fill: #8fd1ad;
+    --danger: #f3a5ad; --danger-fill: #f0a0a8;
+    --infection: #cdb5f3; --infection-fill: #c4a9ef;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.6);
+    --glow-a: #382b27; --glow-b: #1d3a2f; --glow-c: #363223;
+    --primary-tint: #43322c; --secondary-tint: #253d3a; --accent-tint: #423b29; --success-tint: #253d33; --danger-tint: #45302f; --infection-tint: #362c4f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17201c; --surface: #202b26; --surface-2: #29362f; --line: #37473f;
+  --ink: #1f2a24; --text: #eef4f0; --muted: #a8b9af;
+  --primary: #f7b9aa; --primary-fill: #f4ae9d;
+  --secondary: #9fe0cb; --secondary-fill: #9fdcc8;
+  --accent: #f5d98a; --accent-fill: #f3d58a;
+  --success: #94d9b3; --success-fill: #8fd1ad;
+  --danger: #f3a5ad; --danger-fill: #f0a0a8;
+  --infection: #cdb5f3; --infection-fill: #c4a9ef;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.6);
+  --glow-a: #382b27; --glow-b: #1d3a2f; --glow-c: #363223;
+  --primary-tint: #43322c; --secondary-tint: #253d3a; --accent-tint: #423b29; --success-tint: #253d33; --danger-tint: #45302f; --infection-tint: #362c4f;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-fill: var(--primary-fill);
+  --color-primary-tint: var(--primary-tint);
+  --color-secondary: var(--secondary);
+  --color-secondary-fill: var(--secondary-fill);
+  --color-secondary-tint: var(--secondary-tint);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-tint: var(--accent-tint);
+  --color-success: var(--success);
+  --color-success-fill: var(--success-fill);
+  --color-success-tint: var(--success-tint);
+  --color-danger: var(--danger);
+  --color-danger-fill: var(--danger-fill);
+  --color-danger-tint: var(--danger-tint);
+  --color-infection: var(--infection);
+  --color-infection-fill: var(--infection-fill);
+  --color-infection-tint: var(--infection-tint);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+html { font-size: calc(17px * var(--text-scale)); }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  /* niebla de colores muy suave, fija detrás del contenido */
+  background-image:
+    radial-gradient(40rem 28rem at 8% -6%, var(--glow-a), transparent 70%),
+    radial-gradient(36rem 30rem at 100% 10%, var(--glow-c), transparent 70%),
+    radial-gradient(40rem 30rem at 60% 110%, var(--glow-b), transparent 70%);
+  background-attachment: fixed;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 50; background: var(--surface);
+}
+h1, h2, h3 { text-wrap: balance; }
+.font-display { font-weight: 600; letter-spacing: -0.005em; }
+.label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Tarjeta suave: solo para paneles principales */
+.plate {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+/* Cinta de aviso en pastel (melocotón y mantequilla) */
+.hazard {
+  background: repeating-linear-gradient(-45deg, var(--primary-fill) 0 9px, var(--accent-fill) 9px 18px);
+  height: 8px; border-radius: 999px;
+}
+
+:focus-visible { outline: 3px solid var(--secondary); outline-offset: 2px; border-radius: 10px; }
+
+@keyframes pop { from { transform: scale(0.97); opacity: 0.6; } to { transform: scale(1); opacity: 1; } }
+.pop { animation: pop 200ms ease-out; }
+html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
