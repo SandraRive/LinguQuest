@@ -60,7 +60,7 @@ export function ExamPage() {
               {exam.reading.text.map((t) => <p key={t} className="text-lg">{t}</p>)}
             </div>
           )}
-          <Sequence key={section.competency} exercises={section.exercises} mode="exam" onFinish={(pct) => {
+          <Sequence key={section.competency} title={COMPETENCY_LABEL[section.competency]} note="examen de nivel" exercises={section.exercises} mode="exam" onFinish={(pct) => {
             const all = { ...scores, [section.competency]: pct };
             setScores(all);
             if (step + 1 >= exam.sections.length) finish(all); else setStep(step + 1);

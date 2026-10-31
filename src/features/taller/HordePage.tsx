@@ -50,7 +50,7 @@ export function HordePage({ unitId }: { unitId: string }) {
       )}
       {phase === 'fight' && (
         <Plate>
-          <Sequence key={round} exercises={exercises} mode="exam" onFinish={(pct) => { setScore(pct); s.finishHorde(unitId, pct, unit.horde.passPct); setPhase('end'); }} />
+          <Sequence key={round} title={unit.horde.title} note="sin pistas" exercises={exercises} mode="exam" onFinish={(pct) => { setScore(pct); s.finishHorde(unitId, pct, unit.horde.passPct); setPhase('end'); }} />
         </Plate>
       )}
       {phase === 'end' && (

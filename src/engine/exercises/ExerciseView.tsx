@@ -15,9 +15,11 @@ interface Props { ex: Exercise; allowHint: boolean; onAnswered: (correct: boolea
 export function ExerciseView({ ex, allowHint, onAnswered, onNext }: Props) {
   const [result, setResult] = useState<null | boolean>(null);
   const [showHint, setShowHint] = useState(false);
+  const [picked, setPicked] = useState<number | null>(null);
 
   const submit = (a: Answer) => {
     if (result !== null) return;
+    if (a.type === 'choice' || a.type === 'spot') setPicked(a.index);
     const ok = checkAnswer(ex, a);
     setResult(ok);
     onAnswered(ok);
@@ -31,7 +33,7 @@ export function ExerciseView({ ex, allowHint, onAnswered, onNext }: Props) {
         <h2 className="text-lg font-bold">{ex.instruction}</h2>
       </div>
 
-      <Body ex={ex} locked={result !== null} onSubmit={submit} />
+      <Body ex={ex} locked={result !== null} onSubmit={submit} picked={picked} />
 
       {allowHint && ex.hint && result === null && (
         <div>
@@ -41,27 +43,36 @@ export function ExerciseView({ ex, allowHint, onAnswered, onNext }: Props) {
       )}
 
       {result !== null && (
-        <div role="status" className={`pop rounded-2xl p-4 ${result ? 'bg-success-tint' : 'bg-danger-tint'}`}>
-          <p className={`font-bold ${result ? 'text-success' : 'text-danger'}`}>{result ? '✓ Correcto' : '✗ No es correcto'}</p>
-          {!result && <p className="mt-1">Respuesta correcta: <b>{correctText(ex)}</b></p>}
-          <p className="mt-1 text-muted">{ex.explain}</p>
-          <div className="mt-3"><Button onClick={onNext} autoFocus>Continuar</Button></div>
+        <div role="status" className="pop flex flex-wrap items-end justify-between gap-3">
+          <div className={`min-w-0 flex-1 basis-72 rounded-xl border p-4 ${result ? 'border-success-fill/70 bg-success-tint' : 'border-danger-fill/70 bg-danger-tint'}`}>
+            <p className={`text-lg font-bold ${result ? 'text-success' : 'text-danger'}`}>{result ? '✓ ¡Correcto!' : '✗ No es correcto'}</p>
+            {!result && <p className="mt-1">Respuesta correcta: <b>{correctText(ex)}</b></p>}
+            <p className="mt-1 text-muted">{ex.explain}</p>
+          </div>
+          <Button onClick={onNext} autoFocus>Siguiente →</Button>
         </div>
       )}
     </div>
   );
 }
 
-function Body({ ex, locked, onSubmit }: { ex: Exercise; locked: boolean; onSubmit: (a: Answer) => void }) {
+const optClass = (locked: boolean, picked: number | null, i: number, answer: number) => {
+  if (!locked) return 'border-line bg-surface-2 hover:border-primary-fill';
+  if (i === answer) return 'border-success-fill bg-success-tint text-success';
+  if (i === picked) return 'border-danger-fill bg-danger-tint text-danger';
+  return 'border-line bg-surface-2 opacity-50';
+};
+
+function Body({ ex, locked, onSubmit, picked }: { ex: Exercise; locked: boolean; onSubmit: (a: Answer) => void; picked: number | null }) {
   switch (ex.type) {
     case 'choice':
       return (
         <div className="flex flex-col gap-3">
-          <p className="text-2xl font-bold">{ex.prompt}</p>
-          <div className="grid gap-2 sm:grid-cols-3">
+          <p className="rounded-xl border border-dashed border-line bg-surface-2/60 px-4 py-5 text-center text-2xl font-bold">{ex.prompt}</p>
+          <div className={`grid gap-2 ${ex.options.length > 3 ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
             {ex.options.map((o, i) => (
               <button key={o} disabled={locked} onClick={() => onSubmit({ type: 'choice', index: i })}
-                className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-left text-lg font-bold hover:border-primary disabled:opacity-60">{o}</button>
+                className={`rounded-xl border px-4 py-3 text-center text-lg font-bold ${optClass(locked, picked, i, ex.answer)}`}>{o}</button>
             ))}
           </div>
         </div>
@@ -76,12 +87,12 @@ function Body({ ex, locked, onSubmit }: { ex: Exercise; locked: boolean; onSubmi
         <div className="flex flex-wrap gap-2">
           {ex.tokens.map((t, i) => (
             <button key={i} disabled={locked} onClick={() => onSubmit({ type: 'spot', index: i })}
-              className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-lg font-bold hover:border-danger disabled:opacity-60">{t}</button>
+              className={`rounded-xl border px-4 py-3 text-lg font-bold ${optClass(locked, picked, i, ex.wrong)}`}>{t}</button>
           ))}
         </div>
       );
     case 'match': return <MatchBody ex={ex} locked={locked} onSubmit={onSubmit} />;
-    case 'listen': return <ListenBody ex={ex} locked={locked} onSubmit={onSubmit} />;
+    case 'listen': return <ListenBody ex={ex} locked={locked} onSubmit={onSubmit} picked={picked} />;
   }
 }
 
@@ -186,7 +197,7 @@ function MatchBody({ ex, locked, onSubmit }: { ex: Extract<Exercise, { type: 'ma
 }
 
 /** Escuchar: reproduce con la voz del navegador. Sin voz disponible, muestra el texto (pasa a ser lectura). */
-function ListenBody({ ex, locked, onSubmit }: { ex: Extract<Exercise, { type: 'listen' }>; locked: boolean; onSubmit: (a: Answer) => void }) {
+function ListenBody({ ex, locked, onSubmit, picked }: { ex: Extract<Exercise, { type: 'listen' }>; locked: boolean; onSubmit: (a: Answer) => void; picked: number | null }) {
   const { accent, speechRate } = useGame((s) => s.settings);
   const [plays, setPlays] = useState(0);
   const canSpeak = speechAvailable();
@@ -207,7 +218,7 @@ function ListenBody({ ex, locked, onSubmit }: { ex: Extract<Exercise, { type: 'l
       <div className="grid gap-2 sm:grid-cols-3">
         {ex.options.map((o, i) => (
           <button key={o} disabled={locked || (canSpeak && plays === 0)} onClick={() => onSubmit({ type: 'choice', index: i })}
-            className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-left text-lg font-bold hover:border-primary disabled:opacity-50">{o}</button>
+            className={`rounded-xl border px-4 py-3 text-center text-lg font-bold disabled:cursor-not-allowed ${optClass(locked, picked, i, ex.answer)} ${!locked && canSpeak && plays === 0 ? 'opacity-50' : ''}`}>{o}</button>
         ))}
       </div>
       {canSpeak && plays === 0 && <p className="text-sm text-muted">Pulsa «Escuchar» para activar las respuestas.</p>}

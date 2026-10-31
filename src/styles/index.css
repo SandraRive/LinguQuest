@@ -1,73 +1,44 @@
 @import "tailwindcss";
 
 /*
-  Layout: barra lateral suave + panel central estrecho (poca información a la vez).
-  Estilo "apocalipsis pastel" en gris perla: melocotón apagado, azul niebla y mantequilla; lavanda solo para infecciones.
-  Cada color tiene dos versiones: el tono legible (texto) y el relleno pastel (-fill).
+  Layout: barra lateral oscura con iconos + panel central; escenas de apocalipsis en SVG como cabeceras.
+  Identidad "noche de horda": carbón, rojo óxido, naranja y luna roja. Un único tema oscuro (decisión de diseño).
 */
 :root {
-  --bg: #f1efec;            /* gris perla */
-  --surface: #ffffff;
-  --surface-2: #f5f3f0;
-  --line: #e2ded8;
-  --ink: #2b2a28;           /* texto sobre rellenos pastel */
-  --text: #2b2a28;
-  --muted: #66625c;
-  --primary: #a85a44;       /* melocotón tostado (texto) */
-  --primary-fill: #e9b8a6;  /* melocotón apagado */
-  --secondary: #3f6f80;     /* azul niebla oscuro (texto) */
-  --secondary-fill: #a9c7d3;/* azul niebla */
-  --accent: #86661a;        /* mantequilla oscura (texto) */
-  --accent-fill: #ebd39a;   /* mantequilla */
-  --success: #3d7a59;
-  --success-fill: #bcdcc8;
-  --danger: #a94b52;
-  --danger-fill: #eec0c2;
-  --infection: #6e5a9a;
-  --infection-fill: #d9d0ec;
-  --primary-tint: #f8e9e2;
-  --secondary-tint: #e6eff3;
-  --accent-tint: #f8f1de;
-  --success-tint: #e4f0e8;
-  --danger-tint: #f8e5e6;
-  --infection-tint: #eeeaf6;
-  --shadow: 0 1px 2px rgb(40 35 30 / 0.05), 0 8px 24px -12px rgb(40 35 30 / 0.16);
-  --glow-a: #f5ebe5;
-  --glow-b: #e9eef0;
-  --glow-c: #f3eee2;
-  --font-display: "Fredoka", "Trebuchet MS", "Verdana", sans-serif;
+  --bg: #141111;            /* carbón */
+  --surface: #1d1817;
+  --surface-2: #262020;
+  --line: #3a302e;
+  --ink: #1a1312;           /* texto sobre rellenos claros */
+  --text: #f0e9e7;
+  --muted: #b3a6a2;
+  --primary: #ec7468;       /* rojo óxido (texto) */
+  --primary-fill: #e0655a;  /* rojo óxido (botones) */
+  --secondary: #9ec4d4;     /* acero frío: audio y radio */
+  --secondary-fill: #8fb7c9;
+  --accent: #f0ad5a;        /* naranja: XP y logros */
+  --accent-fill: #e7a04c;
+  --success: #7fd29a;
+  --success-fill: #6cc48a;
+  --danger: #f39a9a;
+  --danger-fill: #ee8f8f;
+  --infection: #c3a8ef;
+  --infection-fill: #b79ae6;
+  --primary-tint: #3a201d;
+  --secondary-tint: #1d2b31;
+  --accent-tint: #3a2917;
+  --success-tint: #1b3223;
+  --danger-tint: #3a2224;
+  --infection-tint: #2d2440;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.8);
+  --glow-a: #3a1512;
+  --glow-b: #1d1a19;
+  --glow-c: #2b1a10;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-logo: "Rubik Wet Paint", "Barlow Condensed", Impact, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Verdana", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", monospace;
   --text-scale: 1;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1e2023; --surface: #272a2e; --surface-2: #2f3337; --line: #3b4045;
-    --ink: #26231f; --text: #eceae6; --muted: #aeaaa3;
-    --primary: #edbba9; --primary-fill: #e5ae9b;
-    --secondary: #a9cddb; --secondary-fill: #9cc3d2;
-    --accent: #ecd391; --accent-fill: #e6cc89;
-    --success: #9fd3b4; --success-fill: #93c9a9;
-    --danger: #eeaaae; --danger-fill: #e8a0a5;
-    --infection: #c9b8ec; --infection-fill: #bba8e6;
-    --primary-tint: #3d302b; --secondary-tint: #26343a; --accent-tint: #3a3427; --success-tint: #25392e; --danger-tint: #3d2b2e; --infection-tint: #322c42;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.55);
-    --glow-a: #29241f; --glow-b: #21282c; --glow-c: #2a2820;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #1e2023; --surface: #272a2e; --surface-2: #2f3337; --line: #3b4045;
-  --ink: #26231f; --text: #eceae6; --muted: #aeaaa3;
-  --primary: #edbba9; --primary-fill: #e5ae9b;
-  --secondary: #a9cddb; --secondary-fill: #9cc3d2;
-  --accent: #ecd391; --accent-fill: #e6cc89;
-  --success: #9fd3b4; --success-fill: #93c9a9;
-  --danger: #eeaaae; --danger-fill: #e8a0a5;
-  --infection: #c9b8ec; --infection-fill: #bba8e6;
-  --primary-tint: #3d302b; --secondary-tint: #26343a; --accent-tint: #3a3427; --success-tint: #25392e; --danger-tint: #3d2b2e; --infection-tint: #322c42;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 10px 28px -14px rgb(0 0 0 / 0.55);
-  --glow-a: #29241f; --glow-b: #21282c; --glow-c: #2a2820;
   color-scheme: dark;
 }
 
@@ -100,6 +71,7 @@
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
+  --font-logo: var(--font-logo);
 }
 
 html { font-size: calc(17px * var(--text-scale)); }
@@ -112,33 +84,37 @@ body {
   line-height: 1.6;
   /* niebla de colores muy suave, fija detrás del contenido */
   background-image:
-    radial-gradient(40rem 28rem at 8% -6%, var(--glow-a), transparent 70%),
-    radial-gradient(36rem 30rem at 100% 10%, var(--glow-c), transparent 70%),
-    radial-gradient(40rem 30rem at 60% 110%, var(--glow-b), transparent 70%);
+    radial-gradient(50rem 30rem at 85% -10%, var(--glow-a), transparent 70%),
+    radial-gradient(40rem 30rem at 0% 110%, var(--glow-c), transparent 70%);
   background-attachment: fixed;
 }
 body::before {
   content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
   z-index: 50; background: var(--surface);
 }
+@keyframes pulse-ring { 0%,100% { box-shadow: 0 0 0 2px var(--primary-fill), 0 0 18px -4px var(--primary-fill); } 50% { box-shadow: 0 0 0 3px var(--primary-fill), 0 0 32px 0 var(--primary-fill); } }
+.pulse { animation: pulse-ring 2.4s ease-in-out infinite; }
 h1, h2, h3 { text-wrap: balance; }
-.font-display { font-weight: 600; letter-spacing: -0.005em; }
+.font-display { font-weight: 700; letter-spacing: 0.01em; }
+.font-logo { font-family: var(--font-logo); font-weight: 400; letter-spacing: 0.02em; }
 .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
 /* Tarjeta suave: solo para paneles principales */
 .plate {
   position: relative;
-  background: var(--surface);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, var(--primary) 8%), var(--surface) 40%);
   border: 1px solid var(--line);
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   box-shadow: var(--shadow);
 }
+/* Brillo de acento para el elemento actual (nodo de la ruta, misión) */
+.glow { box-shadow: 0 0 0 2px var(--primary-fill), 0 0 24px -2px color-mix(in srgb, var(--primary-fill) 70%, transparent); }
 
 /* Cinta de aviso en pastel (melocotón y mantequilla) */
 .hazard {
-  background: repeating-linear-gradient(-45deg, var(--primary-fill) 0 9px, var(--accent-fill) 9px 18px);
-  height: 8px; border-radius: 999px;
+  background: repeating-linear-gradient(-45deg, var(--accent-fill) 0 9px, #1a1312 9px 18px);
+  height: 8px; border-radius: 2px; opacity: 0.85;
 }
 
 :focus-visible { outline: 3px solid var(--secondary); outline-offset: 2px; border-radius: 10px; }

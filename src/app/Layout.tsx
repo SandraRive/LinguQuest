@@ -3,29 +3,30 @@ import { useGame } from '../lib/store';
 import { sessionCards, survivorLevel, totalXp, infections } from '../engine/gamification/progress';
 import { Toasts } from '../ui/kit';
 import { Avatar } from '../ui/Avatar';
+import * as Ic from '../ui/icons';
 
-interface NavItem { id: string; label: string; sub: string; phase?: number }
+interface NavItem { id: string; label: string; sub: string; phase?: number; icon: (p: { size?: number }) => ReactNode }
 const NAV: { group: string; items: NavItem[] }[] = [
   { group: 'Base', items: [
-    { id: 'refugio', label: 'El Refugio', sub: 'Inicio' },
-    { id: 'encargos', label: 'Tablón de encargos', sub: 'Misiones' },
-    { id: 'trofeos', label: 'Trofeos', sub: 'Logros' },
-    { id: 'arbol', label: 'Árbol de habilidades', sub: 'Perks por destreza' },
-    { id: 'taquilla', label: 'Taquilla', sub: 'Recompensas cosméticas' },
-    { id: 'diario', label: 'Diario del superviviente', sub: 'Estadísticas' },
+    { id: 'refugio', label: 'El Refugio', sub: 'Inicio', icon: Ic.IconHome },
+    { id: 'encargos', label: 'Tablón de encargos', sub: 'Misiones', icon: Ic.IconTarget },
+    { id: 'trofeos', label: 'Trofeos', sub: 'Logros', icon: Ic.IconTrophy },
+    { id: 'arbol', label: 'Árbol de habilidades', sub: 'Perks por destreza', icon: Ic.IconTree },
+    { id: 'taquilla', label: 'Taquilla', sub: 'Recompensas cosméticas', icon: Ic.IconLocker },
+    { id: 'diario', label: 'Diario del superviviente', sub: 'Estadísticas', icon: Ic.IconChart },
   ] },
   { group: 'Aprender', items: [
-    { id: 'taller', label: 'Taller de construcción', sub: 'Gramática' },
-    { id: 'saqueo', label: 'Saqueo', sub: 'Vocabulario' },
-    { id: 'radio', label: 'Radio de onda corta', sub: 'Listening' },
-    { id: 'diarios', label: 'Diarios encontrados', sub: 'Reading' },
-    { id: 'fabricacion', label: 'Banco de fabricación', sub: 'Writing' },
-    { id: 'walkie', label: 'Walkie-talkie', sub: 'Speaking' },
+    { id: 'taller', label: 'Ruta de aprendizaje', sub: 'Salas, hordas y jefe', icon: Ic.IconHammer },
+    { id: 'saqueo', label: 'Saqueo', sub: 'Vocabulario', icon: Ic.IconBag },
+    { id: 'radio', label: 'Radio de onda corta', sub: 'Listening', icon: Ic.IconRadio },
+    { id: 'diarios', label: 'Diarios encontrados', sub: 'Reading', icon: Ic.IconBook },
+    { id: 'fabricacion', label: 'Banco de fabricación', sub: 'Writing', icon: Ic.IconPen },
+    { id: 'walkie', label: 'Walkie-talkie', sub: 'Speaking', icon: Ic.IconWalkie },
   ] },
   { group: 'Apoyo', items: [
-    { id: 'mantenimiento', label: 'Mantenimiento', sub: 'Repasos' },
-    { id: 'manual', label: 'Manual de supervivencia', sub: 'Diccionario' },
-    { id: 'ficha', label: 'Ficha del superviviente', sub: 'Perfil y ajustes' },
+    { id: 'mantenimiento', label: 'Mantenimiento', sub: 'Repasos', icon: Ic.IconWrench },
+    { id: 'manual', label: 'Manual de supervivencia', sub: 'Diccionario', icon: Ic.IconManual },
+    { id: 'ficha', label: 'Ficha del superviviente', sub: 'Perfil y ajustes', icon: Ic.IconUser },
   ] },
 ];
 
@@ -47,10 +48,9 @@ export function Layout({ route, children }: { route: string; children: ReactNode
   // Ajustes visuales globales
   useEffect(() => {
     const root = document.documentElement;
-    if (settings.theme === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', settings.theme);
     root.style.setProperty('--text-scale', String(settings.textScale));
     root.setAttribute('data-motion', settings.motion ? 'on' : 'off');
-  }, [settings.theme, settings.textScale, settings.motion]);
+  }, [settings.textScale, settings.motion]);
   useEffect(() => setOpen(false), [route]);
 
   const nav = (
@@ -62,8 +62,9 @@ export function Layout({ route, children }: { route: string; children: ReactNode
             const isActive = active === it.id;
             return (
               <a key={it.id} href={`#${it.id}`} aria-current={isActive ? 'page' : undefined}
-                className={`group flex items-center justify-between gap-2 rounded-2xl px-3 py-2 no-underline ${isActive ? 'bg-primary-tint text-text' : 'text-text hover:bg-surface-2'}`}>
-                <span className="flex flex-col leading-tight min-w-0">
+                className={`group flex items-center justify-between gap-2 rounded-xl border px-3 py-2 no-underline ${isActive ? 'border-primary-fill/70 bg-primary-tint text-text' : 'border-transparent text-text hover:bg-surface-2'}`}>
+                <span className={`shrink-0 ${isActive ? 'text-primary' : 'text-muted group-hover:text-text'}`}><it.icon size={20} /></span>
+                <span className="flex flex-1 flex-col leading-tight min-w-0">
                   <span className="font-bold truncate">{it.label}</span>
                   <span className="text-xs text-muted">{it.sub}{it.phase ? ` · sin explorar (fase ${it.phase})` : ''}</span>
                 </span>
@@ -83,7 +84,7 @@ export function Layout({ route, children }: { route: string; children: ReactNode
       {/* Barra superior (móvil) */}
       <header className="sticky z-20 flex items-center justify-between gap-3 border-b border-line bg-surface py-3 lg:hidden"
         style={{ top: 'env(safe-area-inset-top, 0px)', paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))', paddingRight: 'max(16px, env(safe-area-inset-right, 0px))' }}>
-        <a href="#refugio" className="font-display text-xl text-text no-underline">Lingu<span className="text-primary">Quest</span></a>
+        <a href="#refugio" className="font-logo text-2xl leading-none text-text no-underline">Lingu<span className="text-primary">Quest</span></a>
         <div className="flex items-center gap-3">
           <span className="num text-sm text-accent">Nv {lvl.level}</span>
           <button onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-nav" className="rounded-xl border border-line px-3 py-2 font-bold">{open ? 'Cerrar' : 'Menú'}</button>
@@ -92,10 +93,10 @@ export function Layout({ route, children }: { route: string; children: ReactNode
       {open && <div id="mobile-nav" className="lg:hidden border-b border-line bg-surface py-4 max-h-[75vh] overflow-y-auto" style={{ paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))', paddingRight: 'max(16px, env(safe-area-inset-right, 0px))' }}>{nav}</div>}
 
       {/* Barra lateral (escritorio) */}
-      <aside className="hidden lg:flex flex-col gap-6 border-r border-line bg-surface/80 backdrop-blur p-5 sticky top-0 h-screen overflow-y-auto">
+      <aside className="hidden lg:flex flex-col gap-6 border-r border-line bg-[#171313] p-5 sticky top-0 h-screen overflow-y-auto">
         <a href="#refugio" className="no-underline">
-          <p className="font-display text-2xl leading-none text-text">Lingu<span className="text-primary">Quest</span></p>
-          <p className="text-xs text-muted mt-1">Frecuencia de supervivientes · 0 → B2</p>
+          <p className="font-logo text-[2.1rem] leading-[0.95] text-text">Lingu<br /><span className="text-primary">Quest</span></p>
+          <p className="text-xs text-muted mt-2">Academia de supervivientes · 0 → B2</p>
         </a>
         <div className="rounded-2xl bg-surface-2 p-3">
           <div className="flex items-baseline justify-between">
@@ -114,7 +115,7 @@ export function Layout({ route, children }: { route: string; children: ReactNode
         {nav}
       </aside>
 
-      <main id="main" className="mx-auto w-full max-w-3xl pb-32 pt-6 lg:pt-10"
+      <main id="main" className="mx-auto w-full max-w-5xl pb-32 pt-6 lg:pt-8"
         style={{ paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))', paddingRight: 'max(16px, env(safe-area-inset-right, 0px))' }}>
         {children}
       </main>

@@ -52,8 +52,6 @@ export function FichaPage() {
           <p id="name-err" className={`text-sm ${nameErr ? 'text-danger' : 'text-success'}`}>{nameErr || (saved ? 'Guardado.' : '')}</p>
         </form>
 
-        <Row><Group label="Tema" value={s.settings.theme} onChange={(v) => set({ theme: v })}
-          options={[{ v: 'system', l: 'Como el sistema' }, { v: 'dark', l: 'Modo noche' }, { v: 'light', l: 'Modo día' }]} /></Row>
 
         <Row><Group label="Tamaño del texto" value={s.settings.textScale} onChange={(v) => set({ textScale: v })}
           options={[{ v: 1, l: '100 %' }, { v: 1.15, l: '115 %' }, { v: 1.3, l: '130 %' }, { v: 1.5, l: '150 %' }]} /></Row>
