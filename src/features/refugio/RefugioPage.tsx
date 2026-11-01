@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useGame } from '../../lib/store';
 import { BIOMES, TOTAL_TOPICS, lessonById } from '../../content/curriculum';
 import {
-  competencyPct, currentBiome, ERROR_LABELS, infections, nextLesson, progressToB2, recommend,
+  competencyPct, currentBiome, ERROR_LABELS, infections, levelPct, nextBiome, nextLesson, progressToB2, recommend,
   sessionCards, studyDays, survivorLevel, topicsDone, totalXp,
 } from '../../engine/gamification/progress';
 import { missions } from '../../engine/gamification/missions';
@@ -18,7 +18,8 @@ const fmtTime = (s: number) => (s < 60 ? `${s} s` : s < 3600 ? `${Math.round(s /
 export function RefugioPage() {
   const s = useGame();
   const rec = recommend(s);
-  const biome = currentBiome();
+  const biome = currentBiome(s);
+  const nextB = nextBiome(s);
   const xp = totalXp(s);
   const lvl = survivorLevel(xp);
   const due = sessionCards(s).length;
@@ -32,14 +33,13 @@ export function RefugioPage() {
   const story = pending.find((m) => m.kind === 'historia');
   const others = pending.filter((m) => m !== story).slice(0, 3);
   const trophies = ACHIEVEMENTS.filter((a) => s.achievements[a.id]).length;
-  const preA1 = BIOMES[0]!;
-  const preDone = preA1.topics.filter((t) => t.lessons.every((id) => s.lessons[id]?.status === 'passed')).length;
-  const prePct = Math.round((preDone / preA1.topics.length) * 100);
+  const prePct = levelPct(s, biome.code);
+  const forest = biome.code === 'A1';
 
   return (
     <div className="flex flex-col gap-5">
       {/* Cabecera con escena */}
-      <Scenery seed={11} height={230} moon="right" zombies={5} className="rounded-2xl border border-line">
+      <Scenery seed={forest ? 17 : 11} height={230} moon="right" zombies={5} kind={forest ? 'forest' : 'city'} className="rounded-2xl border border-line">
         <div className="flex flex-wrap items-start justify-between gap-4 p-5 sm:p-7">
           <div className="max-w-[34rem]">
             <p className="label text-primary!">Día {days.length} sobrevivido · {biome.biome}</p>
@@ -71,10 +71,10 @@ export function RefugioPage() {
             </span>
           </div>
           <Bar value={prePct} label="Progreso del nivel actual" />
-          <p className="num text-sm text-muted">{prePct} % hacia A1 · {topicsDone(s)}/{TOTAL_TOPICS} temas hasta B2 ({progressToB2(s)} %)</p>
+          <p className="num text-sm text-muted">{prePct} % de {biome.label}{nextB ? ` · después, ${nextB.label}` : ''} · {topicsDone(s)}/{TOTAL_TOPICS} temas hasta B2 ({progressToB2(s)} %)</p>
           <ol className="mt-1 grid grid-cols-5 gap-1 text-center">
-            {BIOMES.map((b, i) => (
-              <li key={b.code} className={`rounded-lg border px-1 py-1.5 ${i === 0 ? 'border-primary-fill bg-primary-tint text-text' : 'border-line text-muted'}`}>
+            {BIOMES.map((b) => (
+              <li key={b.code} className={`rounded-lg border px-1 py-1.5 ${b.code === biome.code ? 'border-primary-fill bg-primary-tint text-text' : s.levelExams[b.code]?.passed ? 'border-success-fill/60 text-success' : 'border-line text-muted'}`}>
                 <span className="block num text-xs font-bold">{b.label}</span>
                 <span className="block text-[0.68rem] leading-tight">{b.biome}</span>
               </li>

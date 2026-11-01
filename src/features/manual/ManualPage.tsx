@@ -10,7 +10,7 @@ export function ManualPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader eyebrow="Diccionario" title="Manual de supervivencia">
-        Busca en inglés o en español. El manual crece con cada fase: de momento contiene las {VOCAB.length} palabras de PRE-A1.
+        Busca en inglés o en español. El manual crece con cada fase: de momento contiene las {VOCAB.length} palabras de PRE-A1 y A1.
       </PageHeader>
       <div>
         <label htmlFor="manual-q" className="label">Buscar</label>

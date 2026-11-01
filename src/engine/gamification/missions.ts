@@ -45,6 +45,26 @@ export function missions(s: GameState): Mission[] {
       ],
     },
     {
+      key: 'story-forest', kind: 'historia', title: 'Supervivientes del bosque', xp: 150, badge: 'Guardabosques',
+      brief: 'Hay un campamento junto al lago. Aprende a contar tu día y a preguntar por la vida de los demás.',
+      objectives: [
+        { label: 'Vencer al jefe de PRE-A1 para entrar al Bosque', done: !!s.levelExams['PRE_A1']?.passed },
+        { label: 'Aprender el Present Simple y Do / Does', done: isPassed(s, 'a1-u1-l18') },
+        { label: 'Contar tu rutina con la hora', done: isPassed(s, 'a1-u1-l20') },
+        { label: 'Superar la Horda del amanecer', done: !!s.hordes['a1-u1']?.passed },
+      ],
+    },
+    {
+      key: 'story-road', kind: 'historia', title: 'El camino al pueblo seguro', xp: 200, badge: 'Exploradora',
+      brief: 'Para llegar al pueblo seguro hay que describir el terreno, pedir ayuda y orientarse.',
+      objectives: [
+        { label: 'Superar la Horda del claro', done: !!s.hordes['a1-u2']?.passed },
+        { label: 'Aprender can y el Present Continuous', done: isPassed(s, 'a1-u3-l26') },
+        { label: 'Superar la Horda del camino', done: !!s.hordes['a1-u3']?.passed },
+        { label: 'Vencer al Leñador (jefe final de A1)', done: !!s.levelExams['A1']?.passed },
+      ],
+    },
+    {
       key: `daily-walls-${t}`, kind: 'diaria', title: 'Mantenimiento diario', xp: 20,
       brief: 'Repara 10 muros del refugio.',
       objectives: [{ label: 'Haz 10 repasos hoy', done: day.reviews >= 10, progress: `${Math.min(10, day.reviews)}/10` }],

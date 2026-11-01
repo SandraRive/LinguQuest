@@ -2,6 +2,9 @@ import { LESSONS as LESSONS_U1, UNIT1 } from './pre-a1/unit1';
 import { LESSONS_U2, UNIT2 } from './pre-a1/unit2';
 import { LESSONS_U3, UNIT3 } from './pre-a1/unit3';
 import { LESSONS_U4, UNIT4 } from './pre-a1/unit4';
+import { LESSONS_U5, UNIT5 } from './a1/unit5';
+import { LESSONS_U6, UNIT6 } from './a1/unit6';
+import { LESSONS_U7, UNIT7 } from './a1/unit7';
 import { VOCAB } from './vocab';
 import { Lesson as LessonSchema, Unit as UnitSchema, VocabItem as VocabSchema } from './schema';
 import type { Lesson } from './schema';
@@ -34,7 +37,14 @@ export const BIOMES: Biome[] = [
   },
   {
     code: 'A1', label: 'A1', biome: 'Bosque', boss: 'El Leñador',
-    topics: ['Present Simple', 'Present Continuous', 'Have got', 'There is / There are', "Can / Can't", 'Adverbios de frecuencia', 'Preposiciones básicas', 'WH Questions', 'Do / Does', 'Descripciones', 'Rutinas', 'Situaciones cotidianas'].map((name) => ({ name, lessons: [] })),
+    topics: [
+      { name: 'Present Simple', lessons: ['a1-u1-l17'] }, { name: 'Do / Does', lessons: ['a1-u1-l18'] },
+      { name: 'Adverbios de frecuencia', lessons: ['a1-u1-l19'] }, { name: 'Rutinas', lessons: ['a1-u1-l20'] },
+      { name: 'Have got', lessons: ['a1-u2-l21'] }, { name: 'There is / There are', lessons: ['a1-u2-l22'] },
+      { name: 'Preposiciones básicas', lessons: ['a1-u2-l23'] }, { name: 'Descripciones', lessons: ['a1-u2-l24'] },
+      { name: "Can / Can't", lessons: ['a1-u3-l25'] }, { name: 'Present Continuous', lessons: ['a1-u3-l26'] },
+      { name: 'WH Questions', lessons: ['a1-u3-l27'] }, { name: 'Situaciones cotidianas', lessons: ['a1-u3-l28'] },
+    ],
   },
   {
     code: 'A2', label: 'A2', biome: 'Desierto', boss: 'La Tormenta de Arena',
@@ -51,8 +61,12 @@ export const BIOMES: Biome[] = [
 ];
 
 export const TOTAL_TOPICS = BIOMES.reduce((n, b) => n + b.topics.length, 0);
-export const UNITS = [UNIT1, UNIT2, UNIT3, UNIT4];
-export const LESSONS = [...LESSONS_U1, ...LESSONS_U2, ...LESSONS_U3, ...LESSONS_U4];
+export const UNITS = [UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+export const LESSONS = [...LESSONS_U1, ...LESSONS_U2, ...LESSONS_U3, ...LESSONS_U4, ...LESSONS_U5, ...LESSONS_U6, ...LESSONS_U7];
+
+/** Niveles con contenido jugable (tienen salas y jefe final). */
+export const PLAYABLE: LevelCode[] = ['PRE_A1', 'A1'];
+export const levelIndex = (code: LevelCode) => BIOMES.findIndex((b) => b.code === code);
 
 // Validación del contenido al arrancar: si algo no cumple el esquema, falla en desarrollo.
 LESSONS.forEach((l) => LessonSchema.parse(l));

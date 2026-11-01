@@ -14,7 +14,7 @@ export function SaqueoPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader eyebrow="Vocabulario · PRE-A1" title="Saqueo">
+      <PageHeader eyebrow="Vocabulario · PRE-A1 y A1" title="Saqueo">
         Cada sala que superas te da su botín de palabras. Toca una tarjeta para darle la vuelta: primero intenta recordar el significado.
       </PageHeader>
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por categoría">

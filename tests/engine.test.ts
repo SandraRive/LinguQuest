@@ -88,13 +88,13 @@ describe('gamificación sin castigo', () => {
 
 import { checkWriting } from '../src/engine/writing';
 import { WRITING_TASKS, TRANSMISSIONS, READINGS } from '../src/content/skills';
-import { EXAM_PRE_A1 } from '../src/content/exams';
+import { EXAM_A1, EXAM_PRE_A1 } from '../src/content/exams';
 import { ALL_CONCEPTS } from '../src/content/curriculum';
 
 describe('contenido PRE-A1 completo', () => {
-  it('hay 16 salas y los ejercicios de escucha son válidos', () => {
-    expect(LESSONS.length).toBe(16);
-    const all = [...LESSONS.flatMap((l) => [...l.guided, ...l.independent, ...l.final]), ...UNITS.flatMap((u) => u.horde.exercises), ...EXAM_PRE_A1.sections.flatMap((s) => s.exercises), ...TRANSMISSIONS.flatMap((t) => t.questions), ...READINGS.flatMap((r) => r.questions)];
+  it('hay 28 salas y los ejercicios de escucha son válidos', () => {
+    expect(LESSONS.length).toBe(28);
+    const all = [...LESSONS.flatMap((l) => [...l.guided, ...l.independent, ...l.final]), ...UNITS.flatMap((u) => u.horde.exercises), ...EXAM_PRE_A1.sections.flatMap((s) => s.exercises), ...EXAM_A1.sections.flatMap((s) => s.exercises), ...TRANSMISSIONS.flatMap((t) => t.questions), ...READINGS.flatMap((r) => r.questions)];
     for (const e of all) {
       if (e.type === 'listen' || e.type === 'choice') expect(e.options[e.answer], e.id).toBeDefined();
       if (e.type === 'order' || e.type === 'build') for (const w of e.answers[0]!.split(' ')) expect(e.tokens.some((t) => normalize(t) === normalize(w)), `${e.id}: ${w}`).toBe(true);
@@ -126,5 +126,27 @@ describe('corrector de escritura', () => {
   it('detecta país en minúscula y nacionalidad en vez de país', () => {
     expect(checkWriting(from, "I'm from spain").ok).toBe(false);
     expect(checkWriting(from, "I'm from Spanish").corrected).toBe("I'm from Spain");
+  });
+});
+
+describe('corrector A1', () => {
+  const w = (id: string) => WRITING_TASKS.find((t) => t.id === id)!;
+  it('añade la -s de tercera persona', () => {
+    const r = checkWriting(w('w8'), 'My sister work in a shop');
+    expect(r.corrected).toBe('My sister works in a shop');
+    expect(r.ok).toBe(false);
+    expect(checkWriting(w('w8'), 'She studies English.').ok).toBe(true);
+    expect(checkWriting(w('w8'), 'Ana go to the river').corrected).toBe('Ana goes to the river');
+  });
+  it('quita la -s después de doesn\'t y con I', () => {
+    expect(checkWriting(w('w8'), "She doesn't works here").corrected).toBe("She doesn't work here");
+    expect(checkWriting(w('w7'), 'I gets up at seven').corrected).toBe('I get up at seven');
+  });
+  it('corrige preposiciones y there is/are', () => {
+    expect(checkWriting(w('w7'), "I get up in seven o'clock").corrected).toBe("I get up at seven o'clock");
+    expect(checkWriting(w('w9'), 'There is two bags next the bed').corrected).toBe('There are two bags next to the bed');
+    expect(checkWriting(w('w9'), "There's a bag under the bed.").ok).toBe(true);
+    expect(checkWriting(w('w10'), "I can swim but I can't drive.").ok).toBe(true);
+    expect(checkWriting(w('w10'), "I can to swim but I can't drive").corrected).toBe("I can swim but I can't drive");
   });
 });

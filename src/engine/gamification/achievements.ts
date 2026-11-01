@@ -23,4 +23,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'talk-1', name: 'Al habla', desc: 'Completa una conversación por walkie-talkie.', icon: '◉', test: (s) => Object.keys(s.activities).some((k) => k.startsWith('walkie:') && s.activities[k]?.completedAt) },
   { id: 'hordes-all', name: 'Refugio asegurado', desc: 'Supera las 4 hordas de PRE-A1.', icon: '⛨', test: (s) => ['pre-a1-u1', 'pre-a1-u2', 'pre-a1-u3', 'pre-a1-u4'].every((u) => s.hordes[u]?.passed) },
   { id: 'boss-pre-a1', name: 'Fin de la primera noche', desc: 'Vence al jefe final de PRE-A1.', icon: '♛', test: (s) => !!s.levelExams['PRE_A1']?.passed },
+  { id: 'forest-in', name: 'Bienvenida al bosque', desc: 'Supera tu primera sala de A1.', icon: '♣', test: (s) => s.lessons['a1-u1-l17']?.status === 'passed' },
+  { id: 'hordes-a1', name: 'Bosque asegurado', desc: 'Supera las 3 hordas de A1.', icon: '⛨', test: (s) => ['a1-u1', 'a1-u2', 'a1-u3'].every((u) => s.hordes[u]?.passed) },
+  { id: 'boss-a1', name: 'Leñador derribado', desc: 'Vence al jefe final de A1.', icon: '♚', test: (s) => !!s.levelExams['A1']?.passed },
 ];

@@ -1,4 +1,5 @@
 import { useRoute } from '../lib/router';
+import { slugToLevel } from '../engine/gamification/progress';
 import { Layout } from './Layout';
 import { RefugioPage } from '../features/refugio/RefugioPage';
 import { TallerPage } from '../features/taller/TallerPage';
@@ -24,6 +25,7 @@ import { ComparacionesPage } from '../features/taller/ComparacionesPage';
 function Page({ route }: { route: string }) {
   if (route.startsWith('sala-')) return <LessonPage id={route.slice(5)} />;
   if (route.startsWith('horda-')) return <HordePage unitId={route.slice(6)} />;
+  if (route.startsWith('jefe-')) { const lv = slugToLevel(route.slice(5)); if (lv === 'PRE_A1' || lv === 'A1') return <ExamPage level={lv} />; }
   switch (route) {
     case 'taller': return <TallerPage />;
     case 'saqueo': return <SaqueoPage />;
@@ -39,7 +41,6 @@ function Page({ route }: { route: string }) {
     case 'walkie': return <WalkiePage />;
     case 'arbol': return <ArbolPage />;
     case 'taquilla': return <TaquillaPage />;
-    case 'jefe-pre-a1': return <ExamPage />;
     case 'comparaciones': return <ComparacionesPage />;
     default: return <RefugioPage />;
   }

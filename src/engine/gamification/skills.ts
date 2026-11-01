@@ -49,5 +49,6 @@ export const FRAMES: Cosmetic[] = [
   { id: 'melocoton', name: 'Melocotón', unlock: 'Nivel 2', test: (s) => lvl(s) >= 2 },
   { id: 'mantequilla', name: 'Mantequilla', unlock: '3 trofeos', test: (s) => Object.keys(s.achievements).length >= 3 },
   { id: 'lavanda', name: 'Lavanda', unlock: 'Curar una infección', test: (s) => !!s.achievements['cure'] },
+  { id: 'bosque', name: 'Bosque', unlock: 'Superar las 3 hordas de A1', test: (s) => ['a1-u1', 'a1-u2', 'a1-u3'].every((u) => s.hordes[u]?.passed) },
 ];
 export { VOCAB_CONCEPTS };

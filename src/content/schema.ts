@@ -26,6 +26,16 @@ export const ErrorTag = z.enum([
   'preposition-time',   // in Monday / on May
   'greetings',          // Good night para saludar
   'country-nationality',// I'm from Spanish
+  'third-person-s',     // she work / he don't
+  'do-does',            // Do she…? / I doesn't
+  'frequency-position', // I go always
+  'time-expressions',   // in 7 o'clock / at Monday
+  'have-got',           // I have got not / Has you got
+  'there-is-are',       // There are a dog / Have a dog in the box
+  'preposition-place',  // on/in/under/next to
+  'can-form',           // I can to swim / She cans
+  'continuous-form',    // I working / I am work
+  'wh-question',        // Where you live? / What time it is?
 ]);
 export type ErrorTag = z.infer<typeof ErrorTag>;
 

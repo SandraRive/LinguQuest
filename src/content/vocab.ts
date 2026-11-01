@@ -1,5 +1,6 @@
 import type { VocabItem } from './schema';
 import { VOCAB2 } from './vocab2';
+import { VOCAB_A1 } from './vocab-a1';
 
 /**
  * Vocabulario PRE-A1 enseñado en la Unidad 1.
@@ -29,6 +30,6 @@ const VOCAB1: VocabItem[] = [
   { id: 'v-yes-no', en: 'yes / no', es: 'sí / no', ipa: '/jes/ · /nəʊ/ (UK) · /noʊ/ (US)', hint: 'iés · nóu', pos: 'expresión', topic: 'Respuestas', example: 'Yes, I am. / No, I\'m not.', exampleEs: 'Sí. / No.' },
 ];
 
-export const VOCAB: VocabItem[] = [...VOCAB1, ...VOCAB2];
+export const VOCAB: VocabItem[] = [...VOCAB1, ...VOCAB2, ...VOCAB_A1];
 
 export const vocabById = (id: string) => VOCAB.find((v) => v.id === id);

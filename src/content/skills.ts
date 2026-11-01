@@ -71,6 +71,36 @@ export const TRANSMISSIONS: Transmission[] = [
       ch('t4-q3', '¿Cuándo hay que responder?', 'Cuándo', ['Lunes o martes', 'Jueves o viernes', 'El fin de semana'], 0, 'on Monday or Tuesday.'),
     ],
   },
+  {
+    id: 't5', level: 'A1', title: 'Rutina del lago', caller: 'Emma · Campamento del lago', accent: 'en-GB', requires: 'a1-u1-l20',
+    lines: [
+      { en: 'Good morning, this is Emma from the lake camp.', es: 'Buenos días, aquí Emma, del campamento del lago.' },
+      { en: 'We get up at six every day.', es: 'Nos levantamos a las seis todos los días.' },
+      { en: 'In the morning, my brother watches the river.', es: 'Por la mañana, mi hermano vigila el río.' },
+      { en: "I don't watch the river. I cook breakfast.", es: 'Yo no vigilo el río. Hago el desayuno.' },
+      { en: 'We never go to the city at night.', es: 'Nunca vamos a la ciudad de noche.' },
+    ],
+    questions: [
+      ch('t5-q1', '¿A qué hora se levantan?', 'hora', ['A las 6', 'A las 7', 'A las 9'], 0, 'We get up at six.'),
+      ch('t5-q2', '¿Quién vigila el río?', 'quién', ['Emma', 'Su hermano', 'Nadie'], 1, 'my brother watches the river.'),
+      ch('t5-q3', '¿Qué no hacen nunca?', 'nunca', ['Cocinar', 'Ir a la ciudad de noche', 'Levantarse pronto'], 1, 'We never go to the city at night.'),
+    ],
+  },
+  {
+    id: 't6', level: 'A1', title: '¡Que vienen!', caller: 'Jack · Torre del camino', accent: 'en-US', requires: 'a1-u3-l27',
+    lines: [
+      { en: 'Hello? This is Jack.', es: '¿Hola? Aquí Jack.' },
+      { en: "I'm in the tower next to the river.", es: 'Estoy en la torre al lado del río.' },
+      { en: 'Look! Five zombies are coming to the camp.', es: '¡Mirad! Cinco zombis vienen hacia el campamento.' },
+      { en: "Ana and Tom aren't in the camp. They're swimming in the river.", es: 'Ana y Tom no están en el campamento. Están nadando en el río.' },
+      { en: 'Where are you? Can you help us?', es: '¿Dónde estáis? ¿Nos podéis ayudar?' },
+    ],
+    questions: [
+      ch('t6-q1', '¿Dónde está Jack?', 'lugar', ['En la torre', 'En el río', 'En el campamento'], 0, "I'm in the tower."),
+      ch('t6-q2', '¿Cuántos zombis vienen?', 'número', ['3', '5', '15'], 1, 'Five zombies.'),
+      ch('t6-q3', '¿Qué están haciendo Ana y Tom?', 'ahora', ['Durmiendo', 'Nadando en el río', 'Cocinando'], 1, "They're swimming in the river."),
+    ],
+  },
 ];
 
 /* ───────── Reading: diarios encontrados ───────── */
@@ -129,6 +159,38 @@ export const READINGS: ReadingText[] = [
       ch('r3-q3', '"Their names" se refiere a los nombres de…', 'their', ['su madre', 'sus hermanos', 'Kate'], 1, 'their = de ellos (los hermanos).'),
     ],
   },
+  {
+    id: 'r4', level: 'A1', title: 'El diario de Tom', kind: 'Diario', requires: 'a1-u1-l20',
+    sentences: [
+      { en: 'I live in the forest camp with my sister.', es: 'Vivo en el campamento del bosque con mi hermana.', structure: 'Present Simple' },
+      { en: 'I get up at six every day.', es: 'Me levanto a las seis todos los días.', structure: 'Rutinas' },
+      { en: 'In the morning, I watch the gate.', es: 'Por la mañana vigilo la puerta.', structure: 'in the morning' },
+      { en: 'My sister cooks and studies English.', es: 'Mi hermana cocina y estudia inglés.', structure: '-s de he/she' },
+      { en: "She doesn't like coffee, but I always drink it.", es: 'A ella no le gusta el café, pero yo siempre lo bebo.', structure: "doesn't / always" },
+      { en: 'At night, we usually sleep next to the fire.', es: 'Por la noche normalmente dormimos junto al fuego.', structure: 'Frecuencia' },
+    ],
+    questions: [
+      ch('r4-q1', '¿A qué hora se levanta Tom?', 'hora', ['A las 6', 'A las 7', 'A las 8'], 0, 'I get up at six.'),
+      ch('r4-q2', '¿Qué hace su hermana?', 'hermana', ['Vigila la puerta', 'Cocina y estudia inglés', 'Conduce'], 1, 'My sister cooks and studies English.'),
+      ch('r4-q3', '¿A quién no le gusta el café?', 'café', ['A Tom', 'A su hermana', 'A los dos'], 1, "She doesn't like coffee."),
+    ],
+  },
+  {
+    id: 'r5', level: 'A1', title: 'Cartel de la puerta del pueblo', kind: 'Cartel', requires: 'a1-u3-l28',
+    sentences: [
+      { en: 'Hello, survivors! This is the safe town.', es: '¡Hola, supervivientes! Esto es el pueblo seguro.' },
+      { en: "There's a shop next to the river. Ana works there in the morning.", es: 'Hay una tienda al lado del río. Ana trabaja allí por la mañana.', structure: 'There is' },
+      { en: 'There are three tents behind the shop for new survivors.', es: 'Hay tres tiendas detrás de la tienda para supervivientes nuevos.', structure: 'There are + preposición' },
+      { en: "Can you cook or drive? Please help us!", es: '¿Sabes cocinar o conducir? ¡Ayúdanos, por favor!', structure: 'Can' },
+      { en: 'Right now we are waiting for more survivors.', es: 'Ahora mismo estamos esperando a más supervivientes.', structure: 'Present Continuous' },
+      { en: 'Questions? Tom is at the gate.', es: '¿Preguntas? Tom está en la puerta.' },
+    ],
+    questions: [
+      ch('r5-q1', '¿Dónde está la tienda?', 'tienda', ['Detrás de las tiendas de campaña', 'Al lado del río', 'En la puerta'], 1, 'next to the river.'),
+      ch('r5-q2', '¿Cuántas tiendas de campaña hay para recién llegados?', 'número', ['2', '3', '4'], 1, 'There are three tents.'),
+      ch('r5-q3', '¿Qué están haciendo ahora?', 'ahora', ['Esperando a más supervivientes', 'Cocinando', 'Durmiendo'], 0, 'we are waiting for more survivors.'),
+    ],
+  },
 ];
 
 /* ───────── Writing guiado ───────── */
@@ -148,6 +210,10 @@ export const WRITING_TASKS: WritingTask[] = [
   { id: 'w4', level: 'PRE_A1', title: 'Un objeto de tu mochila', requires: 'pre-a1-u3-l12', prompt: 'Describe un objeto de tu mochila con su color.', example: "It's a red bottle.", accept: "^(it's|it is) (a|an) [a-z]+ [a-z]+$", acceptFlags: 'i', help: 'It\'s a/an + color + objeto.' },
   { id: 'w5', level: 'PRE_A1', title: 'Presenta a un familiar', requires: 'pre-a1-u4-l13', prompt: 'Presenta a un familiar: "This is my…".', example: 'This is my brother.', accept: "^this is my (mother|father|brother|sister|son|daughter|family|friend)$", acceptFlags: 'i', help: 'This is my + familiar.' },
   { id: 'w6', level: 'PRE_A1', title: 'Qué día es hoy', requires: 'pre-a1-u4-l14', prompt: 'Escribe qué día de la semana es hoy.', example: "It's Monday today.", accept: "^((it's|it is) (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)( today)?|today is (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday))$", acceptFlags: '', help: 'It\'s + día (con mayúscula).' },
+  { id: 'w7', level: 'A1', title: 'Tu rutina', requires: 'a1-u1-l20', prompt: 'Escribe a qué hora te levantas.', example: 'I get up at seven.', accept: "^I (usually |always |often |sometimes )?get up at [a-z0-9:]+( o'clock)?( in the morning)?$", acceptFlags: '', help: 'I get up at + hora.' },
+  { id: 'w8', level: 'A1', title: 'Lo que hace alguien', requires: 'a1-u1-l17', prompt: 'Escribe qué hace un familiar o amigo cada día (usa he o she).', example: 'My sister works in a shop.', accept: "^(he|she|my [a-z]+|[A-Z][a-z]+) (works|lives|studies|cooks|watches|goes|gets up|has|eats|drinks|sleeps|plays|walks|reads|likes)\\b.+$", acceptFlags: '', help: 'He/She + verbo con -s: works, studies, goes…' },
+  { id: 'w9', level: 'A1', title: 'Lo que hay en tu habitación', requires: 'a1-u2-l23', prompt: 'Escribe una cosa que hay en tu habitación y dónde está.', example: "There's a bag under the bed.", accept: "^(there's|there is|there are) .+ (in|on|under|next to|behind|in front of|between) (the|my) [a-z ]+$", acceptFlags: 'i', help: "There's a… + preposición + the…" },
+  { id: 'w10', level: 'A1', title: 'Algo que sabes hacer', requires: 'a1-u3-l25', prompt: 'Escribe algo que sabes hacer y algo que no.', example: "I can swim but I can't drive.", accept: "^I can [a-z]+( [a-z]+)* but I can't [a-z]+( [a-z]+)*$", acceptFlags: '', help: "I can… but I can't…" },
 ];
 
 /* ───────── Speaking ───────── */
@@ -174,6 +240,23 @@ export const SPEAKING: SpeakingSituation[] = [
       { say: 'Are the keys in the box?', es: '¿Están las llaves en la caja?', expect: '\\b(yes|no)\\b', model: "No, they aren't.", tip: 'Yes, they are. / No, they aren\'t.' },
     ],
   },
+  {
+    id: 's3', level: 'A1', title: 'Tu día en el campamento', requires: 'a1-u1-l20',
+    turns: [
+      { say: 'What time do you get up?', es: '¿A qué hora te levantas?', expect: '\\bget up\\b|\\bat\\b', model: 'I get up at seven.', tip: 'I get up at + hora.' },
+      { say: 'Do you like coffee?', es: '¿Te gusta el café?', expect: '\\b(yes|no)\\b', model: "Yes, I do. / No, I don't.", tip: "Respuesta corta: Yes, I do. / No, I don't." },
+      { say: 'What do you usually do in the morning?', es: '¿Qué haces normalmente por la mañana?', expect: '\\bi\\b', model: 'I usually study English.', tip: 'I usually + verbo.' },
+    ],
+  },
+  {
+    id: 's4', level: 'A1', title: 'En el mercado del pueblo', requires: 'a1-u3-l28',
+    turns: [
+      { say: 'Hello! Can I help you?', es: '¡Hola! ¿Le puedo ayudar?', expect: '\\bcan i have\\b|\\bplease\\b', model: 'Can I have a bottle of water, please?', tip: 'Can I have…, please?' },
+      { say: 'Here you are.', es: 'Aquí tiene.', expect: '\\bhow much\\b|\\bthank', model: 'Thank you. How much is it?', tip: 'How much is it?' },
+      { say: "It's two euros. Anything else?", es: 'Son dos euros. ¿Algo más?', expect: '\\b(no|yes|thank)', model: 'No, thank you.', tip: 'No, thank you. / Yes, please.' },
+      { say: 'Where are you going now?', es: '¿Adónde vas ahora?', expect: "\\b(i'm|i am) going\\b|\\bto the\\b", model: "I'm going to the river.", tip: "I'm going to + lugar (Present Continuous)." },
+    ],
+  },
 ];
 
 export const REPEAT_PHRASES = [
@@ -182,4 +265,8 @@ export const REPEAT_PHRASES = [
   { en: 'They are three survivors.', es: 'Son tres supervivientes.', requires: 'pre-a1-u2-l6' },
   { en: "She's Spanish. She's from Spain.", es: 'Es española. Es de España.', requires: 'pre-a1-u4-l15' },
   { en: 'Where is the red bag?', es: '¿Dónde está la mochila roja?', requires: 'pre-a1-u4-l16' },
+  { en: 'I get up at seven and I have breakfast at eight.', es: 'Me levanto a las siete y desayuno a las ocho.', requires: 'a1-u1-l20' },
+  { en: "There's a river next to the camp.", es: 'Hay un río al lado del campamento.', requires: 'a1-u2-l23' },
+  { en: 'Can you help me, please?', es: '¿Me puedes ayudar, por favor?', requires: 'a1-u3-l25' },
+  { en: 'Excuse me, how much is it?', es: 'Perdone, ¿cuánto es?', requires: 'a1-u3-l28' },
 ];

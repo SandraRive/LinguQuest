@@ -1,5 +1,5 @@
 import type { GameState } from '../../lib/store';
-import { BIOMES, LESSONS, TOTAL_TOPICS, UNITS, lessonById } from '../../content/curriculum';
+import { BIOMES, LESSONS, PLAYABLE, TOTAL_TOPICS, UNITS, lessonById, levelIndex, type LevelCode } from '../../content/curriculum';
 import { buildSession, dayKey, isDue } from '../srs/srs';
 import type { ErrorTag } from '../../content/schema';
 import { READINGS, SPEAKING, TRANSMISSIONS, WRITING_TASKS } from '../../content/skills';
@@ -15,10 +15,20 @@ export function survivorLevel(xp: number) {
 
 export const isPassed = (s: GameState, id: string) => s.lessons[id]?.status === 'passed';
 
-/** Una sala está abierta si todos sus prerrequisitos están superados. */
+/**
+ * Un nivel está abierto si es el primero o si se ha vencido al jefe final del nivel anterior.
+ * (El examen por competencias es la prueba de dominio; no basta con completar salas.)
+ */
+export const levelOpen = (s: GameState, level: LevelCode) => {
+  const i = levelIndex(level);
+  if (i <= 0) return true;
+  return !!s.levelExams[BIOMES[i - 1]!.code]?.passed;
+};
+
+/** Una sala está abierta si su nivel está abierto y todos sus prerrequisitos están superados. */
 export const isUnlocked = (s: GameState, id: string) => {
   const l = lessonById(id);
-  return !!l && l.prerequisites.every((p) => isPassed(s, p));
+  return !!l && levelOpen(s, l.level) && l.prerequisites.every((p) => isPassed(s, p));
 };
 
 export const hordeUnlocked = (s: GameState, unitId: string) => {
@@ -32,8 +42,19 @@ export function topicsDone(s: GameState) {
 }
 export const progressToB2 = (s: GameState) => Math.round((topicsDone(s) / TOTAL_TOPICS) * 1000) / 10;
 
-/** El nivel MCER actual: el primer bioma cuyo jefe no se ha vencido. Hoy solo existe el PRE-A1. */
-export const currentBiome = () => BIOMES[0]!;
+/** El nivel MCER actual: el primer nivel jugable cuyo jefe no se ha vencido. */
+export const currentBiome = (s?: GameState) => {
+  const code = s ? PLAYABLE.find((c) => !s.levelExams[c]?.passed) ?? PLAYABLE[PLAYABLE.length - 1]! : 'PRE_A1';
+  return BIOMES[levelIndex(code)]!;
+};
+export const nextBiome = (s: GameState) => BIOMES[levelIndex(currentBiome(s).code) + 1];
+
+/** Porcentaje de temas terminados de un nivel. */
+export const levelPct = (s: GameState, level: LevelCode) => {
+  const b = BIOMES[levelIndex(level)]!;
+  const done = b.topics.filter((t) => t.lessons.length > 0 && t.lessons.every((id) => isPassed(s, id))).length;
+  return Math.round((done / b.topics.length) * 100);
+};
 
 export const dueCards = (s: GameState) => Object.values(s.cards).filter((c) => isDue(c));
 export const sessionCards = (s: GameState) => buildSession(Object.values(s.cards));
@@ -47,17 +68,23 @@ export const studyDays = (s: GameState) => Object.entries(s.days).filter(([, d])
 /** Competencias: solo Grammar y Vocabulary tienen contenido evaluable por ahora. */
 export function competencyPct(s: GameState) {
   const cards = Object.values(s.cards);
-  const grammarIds = new Set(LESSONS.flatMap((l) => l.concepts.filter((c) => c.kind === 'grammar').map((c) => c.id)));
+  const level = currentBiome(s).code;
+  const pool = LESSONS.filter((l) => l.level === level);
+  const grammarIds = new Set(pool.flatMap((l) => l.concepts.filter((c) => c.kind === 'grammar').map((c) => c.id)));
+  const otherIds = new Set(pool.flatMap((l) => l.concepts.filter((c) => c.kind !== 'grammar').map((c) => c.id)));
   const g = cards.filter((c) => grammarIds.has(c.conceptId));
-  const v = cards.filter((c) => !grammarIds.has(c.conceptId));
+  const v = cards.filter((c) => otherIds.has(c.conceptId));
   const pct = (arr: typeof cards, total: number) => (total ? Math.round((arr.reduce((n, c) => n + c.mastery, 0) / (total * 4)) * 100) : 0);
   const totalG = grammarIds.size;
-  const totalV = LESSONS.flatMap((l) => l.concepts).length - totalG;
-  const act = (prefix: string, total: number) => total ? Math.round((Object.entries(s.activities).filter(([k, a]) => k.startsWith(prefix) && a.completedAt).length / total) * 100) : 0;
+  const totalV = otherIds.size;
+  const act = (prefix: string, items: { id: string; level: LevelCode }[]) => {
+    const mine = items.filter((x) => x.level === level);
+    return mine.length ? Math.round((mine.filter((x) => s.activities[`${prefix}${x.id}`]?.completedAt).length / mine.length) * 100) : 0;
+  };
   return {
     grammar: pct(g, totalG), vocabulary: pct(v, totalV),
-    listening: act('radio:', TRANSMISSIONS.length), reading: act('lectura:', READINGS.length),
-    writing: act('escritura:', WRITING_TASKS.length), speaking: act('walkie:', SPEAKING.length),
+    listening: act('radio:', TRANSMISSIONS), reading: act('lectura:', READINGS),
+    writing: act('escritura:', WRITING_TASKS), speaking: act('walkie:', SPEAKING),
   };
 }
 
@@ -86,6 +113,16 @@ export const ERROR_LABELS: Record<ErrorTag, { label: string; lesson: string }> =
   'preposition-time': { label: 'on (días) / in (meses)', lesson: 'pre-a1-u4-l14' },
   greetings: { label: 'Saludos', lesson: 'pre-a1-u4-l15' },
   'country-nationality': { label: 'País o nacionalidad', lesson: 'pre-a1-u4-l15' },
+  'third-person-s': { label: 'La -s de he/she/it', lesson: 'a1-u1-l17' },
+  'do-does': { label: 'do o does', lesson: 'a1-u1-l18' },
+  'frequency-position': { label: 'Dónde va always/never', lesson: 'a1-u1-l19' },
+  'time-expressions': { label: 'at / in / on con la hora', lesson: 'a1-u1-l20' },
+  'have-got': { label: 'have got / has got', lesson: 'a1-u2-l21' },
+  'there-is-are': { label: 'there is / there are', lesson: 'a1-u2-l22' },
+  'preposition-place': { label: 'Preposiciones de lugar', lesson: 'a1-u2-l23' },
+  'can-form': { label: 'can sin to ni -s', lesson: 'a1-u3-l25' },
+  'continuous-form': { label: 'am/is/are + -ing', lesson: 'a1-u3-l26' },
+  'wh-question': { label: 'Orden de las WH questions', lesson: 'a1-u3-l27' },
 };
 
 export type Recommendation = { title: string; why: string; href: string; cta: string };
@@ -101,26 +138,36 @@ export function recommend(s: GameState): Recommendation {
   }
   const next = nextLesson(s);
   if (next) return { title: `Sala: ${next.title}`, why: next.objectives[0] ?? '', href: `#sala-${next.id}`, cta: 'Entrar en la sala' };
-  const unit = UNITS.find((u) => hordeUnlocked(s, u.id) && !s.hordes[u.id]?.passed);
+  const unit = UNITS.find((u) => levelOpen(s, u.level) && hordeUnlocked(s, u.id) && !s.hordes[u.id]?.passed);
   if (unit) return { title: unit.horde.title, why: `Has superado todas las salas de «${unit.building}». La horda mezcla todo lo aprendido.`, href: `#horda-${unit.id}`, cta: 'Enfrentar la horda' };
+  const boss = PLAYABLE.find((c) => levelOpen(s, c) && biomeGate(s, c).allHordes && !s.levelExams[c]?.passed);
+  if (boss) {
+    const b = BIOMES[levelIndex(boss)]!;
+    return { title: `Jefe final: ${b.boss}`, why: `Has vencido todas las hordas de ${b.label}. El examen por competencias decide si dominas el nivel y abre el siguiente.`, href: `#jefe-${examSlug(boss)}`, cta: 'Enfrentar al jefe' };
+  }
   const radio = TRANSMISSIONS.find((t) => isPassed(s, t.requires) && !s.activities[`radio:${t.id}`]?.completedAt);
   if (radio) return { title: `Transmisión: ${radio.title}`, why: 'Escuchar lo que ya sabes leer es lo que más ayuda a entender el inglés hablado.', href: '#radio', cta: 'Encender la radio' };
   const read = READINGS.find((r) => isPassed(s, r.requires) && !s.activities[`lectura:${r.id}`]?.completedAt);
   if (read) return { title: `Diario: ${read.title}`, why: 'Leer textos con lo que has aprendido fija el vocabulario en contexto.', href: '#diarios', cta: 'Leer el diario' };
   const wr = WRITING_TASKS.find((w) => isPassed(s, w.requires) && !s.activities[`escritura:${w.id}`]?.completedAt);
   if (wr) return { title: `Escribe: ${wr.title}`, why: 'Producir tus propias frases es la mejor prueba de que lo has entendido.', href: '#fabricacion', cta: 'Ir al banco' };
-  if (UNITS.every((u) => s.hordes[u.id]?.passed) && !s.levelExams['PRE_A1']?.passed) return { title: 'Jefe final de PRE-A1', why: 'Has vencido todas las hordas. El examen por competencias decide si dominas el nivel.', href: '#jefe-pre-a1', cta: 'Enfrentar al jefe' };
-  return { title: 'Todo al día', why: 'No hay repasos pendientes. Las próximas salas llegan en la siguiente fase. Descansar no resta nada.', href: '#saqueo', cta: 'Revisar el botín' };
+  return { title: 'Todo al día', why: 'No hay repasos pendientes y has terminado todo lo disponible. El siguiente nivel está en construcción. Descansar no resta nada.', href: '#saqueo', cta: 'Revisar el botín' };
 }
 
 export const todayKey = () => dayKey(new Date());
 
-/** Puerta al siguiente bioma: jefe vencido + 80 % de los conceptos del nivel consolidados. */
-export function biomeGate(s: GameState, level: 'PRE_A1' = 'PRE_A1') {
+export const examSlug = (level: LevelCode) => level.toLowerCase().replace('_', '-');
+export const slugToLevel = (slug: string): LevelCode | undefined => PLAYABLE.find((c) => examSlug(c) === slug);
+
+/**
+ * Estado del final de un nivel: hordas, jefe y consolidación.
+ * Abre el siguiente nivel vencer al jefe; la consolidación (80 %) es la recomendación para no olvidar.
+ */
+export function biomeGate(s: GameState, level: LevelCode = 'PRE_A1') {
   const ids = LESSONS.filter((l) => l.level === level).flatMap((l) => l.concepts.map((c) => c.id));
   const consolidated = ids.filter((id) => (s.cards[id]?.mastery ?? 0) >= 3).length;
   const pct = ids.length ? Math.round((consolidated / ids.length) * 100) : 0;
   const allHordes = UNITS.filter((u) => u.level === level).every((u) => s.hordes[u.id]?.passed);
   const exam = s.levelExams[level];
-  return { allHordes, examPassed: !!exam?.passed, provisional: !!exam?.provisional, consolidatedPct: pct, open: !!exam?.passed && pct >= 80 };
+  return { allHordes, examPassed: !!exam?.passed, provisional: !!exam?.provisional, consolidatedPct: pct, open: !!exam?.passed };
 }

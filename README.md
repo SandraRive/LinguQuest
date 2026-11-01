@@ -1,6 +1,6 @@
 # LinguQuest
 
-Academia de inglés de cero absoluto a B2, ambientada en un apocalipsis zombie en tonos pastel.
+Academia de inglés de cero absoluto a B2, ambientada en un apocalipsis zombie (estética oscura en rojo óxido).
 Funciona entera en el navegador: sin servidor, sin base de datos y sin internet una vez cargada.
 
 ## Publicar en GitHub Pages
@@ -37,7 +37,16 @@ resumen, y el progreso anterior queda guardado para poder deshacer.
 | El almacén | Sustantivos · Artículos · Singular y plural · Objetos cotidianos · Colores |
 | Supervivientes | Familia y posesivos · Días y meses · Saludos y presentaciones · Frases sencillas |
 
-Además: jefe final de PRE-A1 (examen por competencias) y unas 115 palabras con IPA UK/US.
+**Contenido A1 · Bosque completo** (los 12 temas del MCER del spec), en 12 salas y 3 unidades con su horda:
+
+| Unidad | Salas |
+| --- | --- |
+| Vida en el bosque | Present Simple · Do / Does · Adverbios de frecuencia · Rutinas y la hora |
+| El campamento | Have got · There is / There are · Preposiciones de lugar · Descripciones |
+| Patrulla | Can / Can't · Present Continuous · WH Questions · Situaciones cotidianas |
+
+Cada nivel termina con un jefe final (examen por competencias). Vencerlo abre el siguiente nivel.
+Unas 190 palabras con IPA UK/US, pronunciación orientativa y ejemplo.
 
 **Módulos**: Refugio · Taller · hordas y jefe final · comparaciones · Radio (listening) · Diarios (reading) ·
 Banco de fabricación (writing guiado con corrector) · Walkie-talkie (speaking con el reconocimiento de voz del navegador) ·
@@ -48,7 +57,7 @@ Botón «NO LO ENTIENDO» con explicaciones alternativas escritas para cada sala
 
 | Pieza | Estado |
 | --- | --- |
-| Contenido A1, A2, B1 y B2 | Por construir, nivel a nivel. |
+| Contenido A2, B1 y B2 | Por construir, nivel a nivel. |
 | Nota de pronunciación | No se puntúa: haría falta un servicio que analice el audio. |
 | Voz | Es la del navegador; la calidad depende del dispositivo. |
 | Revisión del contenido | Conviene que lo revise alguien con nivel C1/C2. |

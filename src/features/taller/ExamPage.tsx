@@ -1,39 +1,42 @@
 import { useState } from 'react';
 import { useGame } from '../../lib/store';
-import { COMPETENCY_LABEL, EXAM_PRE_A1, type Competency } from '../../content/exams';
-import { biomeGate } from '../../engine/gamification/progress';
+import { COMPETENCY_LABEL, EXAMS, type Competency } from '../../content/exams';
+import { BIOMES, levelIndex } from '../../content/curriculum';
+import { biomeGate, levelOpen } from '../../engine/gamification/progress';
 import { Sequence } from '../../engine/exercises/Sequence';
 import { useStudyTimer } from '../../lib/useStudyTimer';
 import { Bar, Button, Chip, LinkButton, PageHeader, Plate } from '../../ui/kit';
 
-export function ExamPage() {
+export function ExamPage({ level }: { level: 'PRE_A1' | 'A1' }) {
   const s = useGame();
-  const exam = EXAM_PRE_A1;
-  const gate = biomeGate(s);
+  const exam = EXAMS[level];
+  const gate = biomeGate(s, level);
+  const biome = BIOMES[levelIndex(level)]!;
+  const next = BIOMES[levelIndex(level) + 1];
   const [step, setStep] = useState(-1);
   const [scores, setScores] = useState<Partial<Record<Competency, number>>>({});
   useStudyTimer();
 
-  if (!gate.allHordes) return (
+  if (!levelOpen(s, level) || !gate.allHordes) return (
     <Plate>
-      <p className="label">Jefe final · PRE-A1</p>
-      <h1 className="font-display text-2xl">{exam.title}</h1>
-      <p className="mt-2 text-muted">Se abre cuando superes las 4 hordas de unidad del Refugio.</p>
-      <LinkButton href="#taller" className="mt-4">Volver al taller</LinkButton>
+      <p className="label">Jefe final · {biome.label}</p>
+      <h1 className="font-display text-3xl">{exam.title}</h1>
+      <p className="mt-2 text-muted">Se abre cuando venzas todas las hordas de {biome.label} · {biome.biome}.</p>
+      <LinkButton href="#taller" className="mt-4">Volver a la ruta</LinkButton>
     </Plate>
   );
 
   const section = exam.sections[step];
   const finish = (all: Partial<Record<Competency, number>>) => {
     const passed = exam.sections.every((sec) => (all[sec.competency] ?? 0) >= exam.passPct);
-    s.finishLevelExam('PRE_A1', all as Record<string, number>, passed, exam.pending.length > 0);
+    s.finishLevelExam(level, all as Record<string, number>, passed, exam.pending.length > 0);
     setStep(exam.sections.length);
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <a href="#taller" className="text-secondary font-bold text-sm">← Taller</a>
-      <PageHeader eyebrow="Jefe final · examen de nivel PRE-A1" title={exam.title}>
+      <a href="#taller" className="text-secondary font-bold text-sm">← Ruta de aprendizaje</a>
+      <PageHeader eyebrow={`Jefe final · examen de nivel ${biome.label} · ${biome.biome}`} title={exam.title}>
         Examen por competencias con preguntas nuevas. Necesitas {exam.passPct} % en cada competencia. Es una puntuación interna de la app: <b className="text-text">no es una certificación oficial</b> (Cambridge, Trinity, EOI…).
       </PageHeader>
 
@@ -84,12 +87,13 @@ export function ExamPage() {
             <li className="text-sm text-muted">Speaking: pendiente (examen provisional).</li>
           </ul>
           <div className="mt-4 rounded-2xl bg-surface-2 p-4">
-            <p className="font-bold">Puerta al Bosque (A1)</p>
-            <p className="text-sm text-muted mt-1">Además del examen, necesitas tener consolidado el 80 % de los conceptos de PRE-A1 en Mantenimiento. Así se demuestra que lo recuerdas con el tiempo, no solo hoy.</p>
+            <p className="font-bold">{next ? `Puerta a ${next.biome} (${next.label})` : 'Fin del camino'}</p>
+            <p className="text-sm text-muted mt-1">Vencer al jefe abre el siguiente nivel{next && levelIndex(next.code) > 1 ? ' (cuando esté construido)' : ''}. Te recomiendo además seguir repasando en Mantenimiento hasta tener consolidado el 80 % de los conceptos de {biome.label}: así no se te olvida lo aprendido.</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <Chip tone={gate.examPassed ? 'success' : 'muted'}>Examen {gate.examPassed ? 'superado' : 'pendiente'}</Chip>
               <Chip tone={gate.consolidatedPct >= 80 ? 'success' : 'muted'}>Consolidado {gate.consolidatedPct} %</Chip>
             </div>
+            {gate.examPassed && next && levelIndex(next.code) <= 1 && <LinkButton href="#taller" className="mt-3">Ir a {next.biome}</LinkButton>}
           </div>
           <div className="mt-4 flex gap-2"><Button onClick={() => setStep(-1)}>Volver a intentarlo</Button><LinkButton href="#refugio" variant="ghost">Ir al refugio</LinkButton></div>
         </Plate>

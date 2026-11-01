@@ -24,8 +24,12 @@ function Zombie({ x, y, s, flip }: { x: number; y: number; s: number; flip?: boo
   );
 }
 
-export function Scenery({ seed = 7, height = 220, moon = 'right', tower = true, zombies = 4, className = '', children }: {
-  seed?: number; height?: number; moon?: 'left' | 'right' | 'none'; tower?: boolean; zombies?: number; className?: string; children?: ReactNode;
+/** Pino en silueta (para el bioma Bosque). */
+const pine = (x: number, base: number, h: number, w: number) =>
+  `M${x} ${base - h} L${x + w * 0.32} ${base - h * 0.62} L${x + w * 0.18} ${base - h * 0.62} L${x + w * 0.45} ${base - h * 0.3} L${x + w * 0.28} ${base - h * 0.3} L${x + w * 0.5} ${base} L${x - w * 0.5} ${base} L${x - w * 0.28} ${base - h * 0.3} L${x - w * 0.45} ${base - h * 0.3} L${x - w * 0.18} ${base - h * 0.62} L${x - w * 0.32} ${base - h * 0.62} Z`;
+
+export function Scenery({ seed = 7, height = 220, moon = 'right', tower = true, zombies = 4, kind = 'city', className = '', children }: {
+  seed?: number; height?: number; moon?: 'left' | 'right' | 'none'; tower?: boolean; zombies?: number; kind?: 'city' | 'forest'; className?: string; children?: ReactNode;
 }) {
   const g = useMemo(() => {
     const r = rng(seed);
@@ -40,7 +44,11 @@ export function Scenery({ seed = 7, height = 220, moon = 'right', tower = true, 
       x += w + 10 + r() * 30;
     }
     const zs = Array.from({ length: zombies }, (_, i) => ({ x: 120 + r() * 960, s: 0.7 + r() * 0.5, flip: i % 2 === 0, y: 296 }));
-    return { far, mid, zs, towerX: moon === 'left' ? 980 : 150 };
+    const farPines: { x: number; h: number; w: number }[] = [];
+    for (let x = -20; x < 1230; x += 22 + r() * 26) farPines.push({ x, h: 90 + r() * 90, w: 40 + r() * 30 });
+    const midPines: { x: number; h: number; w: number }[] = [];
+    for (let x = -30; x < 1240; x += 55 + r() * 70) midPines.push({ x, h: 130 + r() * 120, w: 60 + r() * 40 });
+    return { far, mid, zs, farPines, midPines, towerX: moon === 'left' ? 980 : 150 };
   }, [seed, zombies, moon]);
   const moonX = moon === 'left' ? 230 : 960;
 
@@ -71,8 +79,13 @@ export function Scenery({ seed = 7, height = 220, moon = 'right', tower = true, 
             <circle cx={moonX + 14} cy="92" r="5" fill="#b44a41" />
           </g>
         )}
-        {g.far.map((b, i) => <rect key={`f${i}`} x={b.x} y={300 - b.h - 40} width={b.w} height={b.h + 40} fill={FAR} />)}
-        {g.mid.map((b, i) => (
+        {kind === 'forest' ? (
+          <>
+            {g.farPines.map((p, i) => <path key={`fp${i}`} d={pine(p.x, 290, p.h, p.w)} fill={FAR} />)}
+            {g.midPines.map((p, i) => <path key={`mp${i}`} d={pine(p.x, 300, p.h, p.w)} fill={MID} />)}
+          </>
+        ) : g.far.map((b, i) => <rect key={`f${i}`} x={b.x} y={300 - b.h - 40} width={b.w} height={b.h + 40} fill={FAR} />)}
+        {kind === 'city' && g.mid.map((b, i) => (
           <g key={`m${i}`}>
             <path d={b.broken
               ? `M${b.x} 300 V${300 - b.h} h${b.w * 0.3} l${b.w * 0.15} ${18} l${b.w * 0.2} ${-10} l${b.w * 0.35} ${22} V300 Z`

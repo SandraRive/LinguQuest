@@ -1,5 +1,5 @@
 /** Avatar de superviviente dibujado en SVG (sin imágenes externas). */
-const FRAME: Record<string, string> = { menta: 'var(--secondary-fill)', melocoton: 'var(--primary-fill)', mantequilla: 'var(--accent-fill)', lavanda: 'var(--infection-fill)' };
+const FRAME: Record<string, string> = { menta: 'var(--secondary-fill)', melocoton: 'var(--primary-fill)', mantequilla: 'var(--accent-fill)', lavanda: 'var(--infection-fill)', bosque: 'var(--success-fill)' };
 
 export function Avatar({ avatar, frame, size = 56 }: { avatar: string; frame: string; size?: number }) {
   const ring = FRAME[frame] ?? FRAME.menta;

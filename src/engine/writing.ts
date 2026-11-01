@@ -13,7 +13,30 @@ const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
 const COUNTRIES = ['spain', 'england', 'france', 'italy', 'mexico', 'germany', 'portugal', 'argentina', 'colombia', 'chile', 'peru', 'london', 'madrid'];
 const cap = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
 
+const VERBS = ['work', 'live', 'like', 'eat', 'drink', 'sleep', 'cook', 'play', 'walk', 'read', 'swim', 'drive', 'run', 'help', 'speak'];
+const ES_VERBS: Record<string, string> = { go: 'goes', watch: 'watches', study: 'studies', have: 'has', do: 'does' };
+const thirdPerson = (v: string) => ES_VERBS[v] ?? `${v}s`;
+const SUBJ3 = '(he|she|it|He|She|It|[Mm]y (?:mother|father|brother|sister|son|daughter|friend|dog)|(?!(?:They|We|You|My)\\b)[A-Z][a-z]+)';
+
 const DETECTORS: Detector[] = [
+  { re: new RegExp(`(^|\\.\\s)${SUBJ3} (doesn't|does not) (${[...VERBS, ...Object.keys(ES_VERBS)].map(thirdPerson).join('|')})\\b`), fix: (s) => s.replace(new RegExp(`\\b(doesn't|does not) (${[...VERBS, ...Object.keys(ES_VERBS)].map(thirdPerson).join('|')})\\b`), (_m, neg: string, v: string) => `${neg} ${Object.entries(ES_VERBS).find(([, t]) => t === v)?.[0] ?? v.replace(/s$/, '')}`),
+    why: 'Con doesn\'t el verbo va sin -s: la -s ya está en does.', rule: 'doesn\'t + verbo tal cual.', example: "She doesn't work here." },
+  { re: new RegExp(`^${SUBJ3} (always |usually |often |sometimes |never )?(${[...VERBS, ...Object.keys(ES_VERBS)].join('|')})\\b`), fix: (s) => s.replace(new RegExp(`^${SUBJ3} (always |usually |often |sometimes |never )?(${[...VERBS, ...Object.keys(ES_VERBS)].join('|')})\\b`), (_m, subj: string, adv: string | undefined, v: string) => `${subj} ${adv ?? ''}${thirdPerson(v)}`),
+    why: 'Con he, she, it (o un nombre) el verbo lleva -s en Present Simple.', rule: 'he / she / it + verbo-s (works, goes, studies, has).', example: 'My sister works in a shop.' },
+  { re: /\bcan to ([a-z]+)\b/i, fix: (s) => s.replace(/\bcan to ([a-z]+)\b/i, 'can $1'),
+    why: 'Después de can no va to.', rule: 'can + verbo tal cual.', example: 'I can swim.' },
+  { re: /\b(I|you|we|they) (always |usually |often |sometimes |never )?(gets up|works|lives|studies|goes|has)\b/, fix: (s) => s.replace(/\b(I|you|we|they) (always |usually |often |sometimes |never )?(gets up|works|lives|studies|goes|has)\b/, (_m, subj: string, adv: string | undefined, v: string) => `${subj} ${adv ?? ''}${({ 'gets up': 'get up', studies: 'study', goes: 'go', has: 'have' } as Record<string, string>)[v] ?? v.replace(/s$/, '')}`),
+    why: 'La -s es solo para he, she, it.', rule: 'I / you / we / they + verbo sin -s.', example: 'I get up at seven.' },
+  { re: /\bin (\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)( o'clock)?\b/i, fix: (s) => s.replace(/\bin (\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)( o'clock)?\b/i, 'at $1$2'),
+    why: 'Con las horas se usa at.', rule: 'at + hora (at seven).', example: "I get up at seven o'clock." },
+  { re: /\bin the night\b/i, fix: (s) => s.replace(/\bin the night\b/i, 'at night'),
+    why: 'Se dice at night.', rule: 'at night (excepción).', example: 'We sleep at night.' },
+  { re: /\bthere is (two|three|four|five|six|seven|eight|nine|ten|many|some|\d+)\b/i, fix: (s) => s.replace(/\b(there) is (two|three|four|five|six|seven|eight|nine|ten|many|some|\d+)\b/i, (_m, t: string, n: string) => `${t} are ${n}`),
+    why: 'Con plural se usa there are.', rule: 'there is + singular · there are + plural.', example: 'There are two trees.' },
+  { re: /\bnext (the|my)\b/i, fix: (s) => s.replace(/\bnext (the|my)\b/i, 'next to $1'),
+    why: 'next to lleva to.', rule: 'next to = al lado de.', example: 'The bag is next to the bed.' },
+  { re: /\bin front (the|my)\b/i, fix: (s) => s.replace(/\bin front (the|my)\b/i, 'in front of $1'),
+    why: 'in front of lleva of.', rule: 'in front of = delante de.', example: 'Tom is in front of the door.' },
   { re: /\bi have (\d+|[a-z]+(-[a-z]+)?) years( old)?\b/i, fix: (s) => s.replace(/\bi have (\d+|[a-z]+(?:-[a-z]+)?) years( old)?\b/i, "I'm $1"),
     why: 'La edad no se "tiene" en inglés.', rule: 'Edad = be + número (sala «Me presento por radio»).', example: "She's thirty. / I'm 25." },
   { re: /\bi have (hungry|cold|thirsty)\b/i, fix: (s) => s.replace(/\bi have (hungry|cold|thirsty)\b/i, "I'm $1"),

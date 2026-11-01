@@ -64,7 +64,7 @@ export function LessonPage({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-5">
       <nav aria-label="Ruta" className="flex flex-wrap items-center gap-1.5 text-sm text-muted">
-        <a href="#taller" className="inline-flex items-center gap-1 font-bold text-text hover:text-primary"><IconBack size={16} /> PRE-A1</a>
+        <a href="#taller" className="inline-flex items-center gap-1 font-bold text-text hover:text-primary"><IconBack size={16} /> {lesson.level.replace('_', '-')}</a>
         <IconChevron size={14} /><span>Unidad: {unit?.title}</span>
         <IconChevron size={14} /><span className="text-text">Sala {roomNo}</span>
       </nav>
@@ -196,7 +196,7 @@ function Theory({ lesson, onNext }: { lesson: Lesson; onNext: () => void }) {
       </aside>
 
       <div className="flex min-w-0 flex-col gap-5">
-        <Scenery seed={lesson.id.length * 7 + lesson.title.length} height={210} moon="none" tower={false} zombies={3} className="rounded-2xl border border-line">
+        <Scenery seed={lesson.id.length * 7 + lesson.title.length} height={210} moon="none" tower={false} zombies={3} kind={lesson.level === 'A1' ? 'forest' : 'city'} className="rounded-2xl border border-line">
           <div className="flex flex-wrap items-start justify-between gap-6 p-5 sm:p-6">
             <div className="max-w-[30rem]">
               <h2 className="font-display text-3xl">Para empezar</h2>

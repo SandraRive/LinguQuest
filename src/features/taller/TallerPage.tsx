@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useGame } from '../../lib/store';
-import { BIOMES, UNITS, lessonById } from '../../content/curriculum';
-import { biomeGate, hordeUnlocked, isPassed, isUnlocked } from '../../engine/gamification/progress';
+import { BIOMES, LESSONS, PLAYABLE, UNITS, lessonById, levelIndex, type LevelCode } from '../../content/curriculum';
+import { biomeGate, currentBiome, examSlug, hordeUnlocked, isPassed, isUnlocked, levelOpen } from '../../engine/gamification/progress';
 import { Chip, LinkButton, Plate } from '../../ui/kit';
 import { Scenery } from '../../ui/Scenery';
 import { Biohazard, IconCheck, IconLock, IconSkull } from '../../ui/icons';
@@ -54,47 +55,73 @@ function TrailMap({ nodes, seed }: { nodes: PathNode[]; seed: number }) {
   );
 }
 
+const SUBTITLE: Record<string, string> = { PRE_A1: 'Cero absoluto', A1: 'Beginner', A2: 'Elementary', B1: 'Intermediate', B2: 'Upper Intermediate' };
+
 export function TallerPage() {
   const s = useGame();
-  const gate = biomeGate(s);
+  const [level, setLevel] = useState<LevelCode>(() => currentBiome(s).code);
+  const biome = BIOMES[levelIndex(level)]!;
+  const playable = PLAYABLE.includes(level);
+  const open = levelOpen(s, level);
+  const gate = biomeGate(s, level);
+  const units = UNITS.filter((u) => u.level === level);
+  const forest = level === 'A1';
+  const nextB = BIOMES[levelIndex(level) + 1];
   let currentGiven = false;
-  const mark = (open: boolean, done: boolean): NodeState => {
+  const mark = (isOpen: boolean, done: boolean): NodeState => {
     if (done) return 'done';
-    if (!open) return 'locked';
+    if (!isOpen) return 'locked';
     if (!currentGiven) { currentGiven = true; return 'current'; }
     return 'open';
   };
-  let n = 0;
+  let n = LESSONS.filter((l) => levelIndex(l.level) < levelIndex(level)).length;
 
   return (
     <div className="flex flex-col gap-5">
-      <Scenery seed={23} height={190} moon="left" zombies={3} className="rounded-2xl border border-line">
+      <Scenery seed={forest ? 31 : 23} height={190} moon="left" zombies={3} kind={forest ? 'forest' : 'city'} className="rounded-2xl border border-line">
         <div className="p-5 sm:p-7">
-          <p className="label text-primary!">Gramática y vocabulario</p>
+          <p className="label text-primary!">{biome.label} · {biome.biome}</p>
           <h1 className="font-display text-4xl leading-none sm:text-5xl">Ruta de aprendizaje</h1>
-          <p className="mt-2 max-w-[36rem] text-muted">Tu camino de supervivencia del inglés: de cero a B2. Supera cada sala con un 80 % para abrir la siguiente.</p>
+          <p className="mt-2 max-w-[36rem] text-muted">Tu camino de supervivencia del inglés: de cero a B2. Supera cada sala con un 80 % para abrir la siguiente, y vence al jefe final para abrir el siguiente nivel.</p>
         </div>
       </Scenery>
 
       {/* Niveles */}
       <div className="grid grid-cols-5 overflow-hidden rounded-xl border border-line" role="tablist" aria-label="Niveles">
-        {BIOMES.map((b, i) => (
-          <div key={b.code} role="tab" aria-selected={i === 0} aria-disabled={i !== 0}
-            className={`px-2 py-2.5 text-center ${i === 0 ? 'bg-primary-tint text-text shadow-[inset_0_-3px_0_var(--primary-fill)]' : 'bg-surface text-muted'} ${i ? 'border-l border-line' : ''}`}>
-            <p className="font-display whitespace-nowrap text-base leading-none sm:text-lg">{b.label}</p>
-            <p className="mt-0.5 hidden text-xs sm:block">{i === 0 ? 'Cero absoluto' : b.biome}</p>
-            {i > 0 && <p className="mt-0.5 flex items-center justify-center gap-1 text-[0.68rem]"><IconLock size={12} /> pronto</p>}
-          </div>
-        ))}
+        {BIOMES.map((b, i) => {
+          const sel = b.code === level;
+          const can = PLAYABLE.includes(b.code);
+          const isOpenB = levelOpen(s, b.code);
+          return (
+            <button key={b.code} role="tab" aria-selected={sel} disabled={!can} onClick={() => setLevel(b.code)}
+              className={`px-2 py-2.5 text-center ${sel ? 'bg-primary-tint text-text shadow-[inset_0_-3px_0_var(--primary-fill)]' : can ? 'bg-surface text-text hover:bg-surface-2' : 'bg-surface text-muted cursor-not-allowed'} ${i ? 'border-l border-line' : ''}`}>
+              <p className="font-display whitespace-nowrap text-base leading-none sm:text-lg">{b.label}</p>
+              <p className="mt-0.5 hidden text-xs sm:block">{SUBTITLE[b.code]}</p>
+              {!can ? <p className="mt-0.5 flex items-center justify-center gap-1 text-[0.68rem]"><IconLock size={12} /> pronto</p>
+                : !isOpenB ? <p className="mt-0.5 flex items-center justify-center gap-1 text-[0.68rem] text-muted"><IconLock size={12} /> jefe anterior</p>
+                : s.levelExams[b.code]?.passed ? <p className="mt-0.5 flex items-center justify-center gap-1 text-[0.68rem] text-success"><IconCheck size={12} /> vencido</p> : null}
+            </button>
+          );
+        })}
       </div>
 
-      {UNITS.map((u, ui) => {
+      {playable && !open && (
+        <Plate className="flex flex-wrap items-center justify-between gap-3">
+          <div className="max-w-[40rem]">
+            <p className="flex items-center gap-2 font-bold"><IconLock size={18} /> {biome.biome} está cerrado</p>
+            <p className="mt-1 text-sm text-muted">Para entrar hay que vencer al jefe final de {BIOMES[levelIndex(level) - 1]!.label}: es el examen que demuestra que dominas el nivel anterior.</p>
+          </div>
+          <LinkButton href={`#jefe-${examSlug(BIOMES[levelIndex(level) - 1]!.code)}`}>Ir al jefe final</LinkButton>
+        </Plate>
+      )}
+
+      {units.map((u, ui) => {
         const nodes: PathNode[] = u.lessons.map((id) => {
           const l = lessonById(id)!;
           n++;
           return { key: id, label: `${n}. ${l.title}`, sub: l.room, href: `#sala-${id}`, state: mark(isUnlocked(s, id), isPassed(s, id)) };
         });
-        nodes.push({ key: u.horde.title, label: u.horde.title, sub: `Mini-horda · ${u.horde.passPct} %`, href: `#horda-${u.id}`, state: mark(hordeUnlocked(s, u.id), !!s.hordes[u.id]?.passed), boss: true });
+        nodes.push({ key: u.horde.title, label: u.horde.title, sub: `Mini-horda · ${u.horde.passPct} %`, href: `#horda-${u.id}`, state: mark(open && hordeUnlocked(s, u.id), !!s.hordes[u.id]?.passed), boss: true });
         const done = u.lessons.filter((id) => isPassed(s, id)).length;
         return (
           <Plate key={u.id} className="p-4! sm:p-5!">
@@ -105,39 +132,43 @@ export function TallerPage() {
               </div>
               <span className="num text-sm text-muted">{done}/{u.lessons.length} salas{s.hordes[u.id]?.passed ? ' · horda vencida' : ''}</span>
             </div>
-            <TrailMap nodes={nodes} seed={ui * 2} />
+            <TrailMap nodes={nodes} seed={ui * 2 + levelIndex(level)} />
           </Plate>
         );
       })}
 
       {/* Jefe final */}
-      <Scenery seed={41} height={170} moon="right" tower={false} zombies={7} className="rounded-2xl border border-line">
-        <div className="flex flex-wrap items-end justify-between gap-4 p-5 sm:p-7">
-          <div className="max-w-[34rem]">
-            <p className="label text-primary!">Jefe final de nivel · PRE-A1</p>
-            <h2 className="font-display text-3xl">La Horda de la Primera Noche</h2>
-            <p className="text-muted">Examen por competencias: grammar, vocabulary, listening, reading y writing. Se abre al vencer las 4 hordas.</p>
+      {playable && (
+        <Scenery seed={forest ? 53 : 41} height={170} moon="right" tower={false} zombies={7} kind={forest ? 'forest' : 'city'} className="rounded-2xl border border-line">
+          <div className="flex flex-wrap items-end justify-between gap-4 p-5 sm:p-7">
+            <div className="max-w-[34rem]">
+              <p className="label text-primary!">Jefe final de nivel · {biome.label}</p>
+              <h2 className="font-display text-3xl">{biome.boss}</h2>
+              <p className="text-muted">Examen por competencias: grammar, vocabulary, listening, reading y writing. Se abre al vencer las {units.length} hordas.{nextB ? ` Vencerlo abre ${nextB.biome} (${nextB.label}).` : ''}</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {s.levelExams[level]?.passed ? <Chip tone="success">Vencido</Chip> : open && gate.allHordes ? <Chip tone="danger">Disponible</Chip> : <Chip>{units.filter((x) => s.hordes[x.id]?.passed).length}/{units.length} hordas</Chip>}
+              {open && gate.allHordes && <LinkButton href={`#jefe-${examSlug(level)}`}>{s.levelExams[level] ? 'Volver a enfrentarlo' : 'Enfrentar al jefe'}</LinkButton>}
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {s.levelExams['PRE_A1']?.passed ? <Chip tone="success">Vencido</Chip> : gate.allHordes ? <Chip tone="danger">Disponible</Chip> : <Chip>{UNITS.filter((x) => s.hordes[x.id]?.passed).length}/4 hordas</Chip>}
-            {gate.allHordes && <LinkButton href="#jefe-pre-a1">{s.levelExams['PRE_A1'] ? 'Volver a enfrentarlo' : 'Enfrentar al jefe'}</LinkButton>}
-          </div>
-        </div>
-      </Scenery>
+        </Scenery>
+      )}
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Plate>
           <h2 className="font-display text-2xl">Comparaciones</h2>
-          <p className="mt-1 text-sm text-muted">a vs an, his vs her, on vs in, Good evening vs Good night… y las de niveles superiores cuando lleguen.</p>
+          <p className="mt-1 text-sm text-muted">a vs an, his vs her, Present Simple vs Continuous, Do vs Does… Se abren cuando conoces las dos piezas.</p>
           <LinkButton href="#comparaciones" variant="ghost" className="mt-3">Ver comparaciones</LinkButton>
         </Plate>
-        <Plate>
-          <h2 className="font-display text-2xl">Próximo bioma: {BIOMES[1]!.biome} (A1)</h2>
-          <p className="mt-1 text-sm text-muted">Sus salas se están construyendo:</p>
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {BIOMES[1]!.topics.map((t) => <li key={t.name}><Chip>{t.name}</Chip></li>)}
-          </ul>
-        </Plate>
+        {nextB && (
+          <Plate>
+            <h2 className="font-display text-2xl">Después: {nextB.biome} ({nextB.label})</h2>
+            <p className="mt-1 text-sm text-muted">{PLAYABLE.includes(nextB.code) ? 'Se abre al vencer al jefe de este nivel. Temas:' : 'Sus salas se están construyendo. Temas:'}</p>
+            <ul className="mt-3 flex flex-wrap gap-1.5">
+              {nextB.topics.map((t) => <li key={t.name}><Chip>{t.name}</Chip></li>)}
+            </ul>
+          </Plate>
+        )}
       </div>
     </div>
   );
