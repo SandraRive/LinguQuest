@@ -74,7 +74,7 @@ const DETECTORS: Detector[] = [
     why: 'El color va antes del objeto.', rule: 'Adjetivo + sustantivo.', example: 'a green door' },
 ];
 
-const tidy = (s: string) => s.trim().replace(/\s+/g, ' ').replace(/[.!]+$/, '');
+const tidy = (s: string) => s.replace(/[\u2018\u2019\u00B4`]/g, "'").trim().replace(/\s+/g, ' ').replace(/[.!]+$/, '');
 
 export function checkWriting(task: WritingTask, raw: string): { ok: boolean; issues: WritingIssue[]; corrected: string } {
   const original = tidy(raw);

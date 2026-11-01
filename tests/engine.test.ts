@@ -150,3 +150,17 @@ describe('corrector A1', () => {
     expect(checkWriting(w('w10'), "I can to swim but I can't drive").corrected).toBe("I can swim but I can't drive");
   });
 });
+
+describe('tareas de escritura con mayúscula inicial', () => {
+  it('acepta frases que empiezan en mayúscula y apóstrofo curvo', async () => {
+    const { WRITING_TASKS } = await import('../src/content/skills');
+    const { checkWriting } = await import('../src/engine/writing');
+    const t = (id: string) => WRITING_TASKS.find((w) => w.id === id)!;
+    expect(checkWriting(t('w6'), "It's Monday today").ok).toBe(true);
+    expect(checkWriting(t('w6'), 'It’s Sunday today.').ok).toBe(true);
+    expect(checkWriting(t('w6'), 'Today is Sunday').ok).toBe(true);
+    expect(checkWriting(t('w8'), 'He works in a shop').ok).toBe(true);
+    expect(checkWriting(t('w8'), 'She studies English').ok).toBe(true);
+    for (const w of WRITING_TASKS) expect(checkWriting(w, w.example).ok, w.id).toBe(true);
+  });
+});
